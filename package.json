@@ -1,0 +1,36 @@
+{
+  "name": "simplify",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q src/index.ts\"",
+    "start": "node dist/src/index.js",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "Muhammad Naufan Athoillah",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.0",
+    "sequelize": "^6.37.4",
+    "sequelize-cli": "^6.6.2",
+    "sequelize-typescript": "^2.1.6",
+    "simplify": "file:"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "@types/sequelize": "^4.28.20",
+    "concurrently": "^9.0.1",
+    "eslint": "^9.12.0",
+    "globals": "^15.11.0",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1"
+  }
+}
