@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import { CustomLogger } from "./logger/logger.service";
 import { AppController } from "./app/app.controller";
-import { AppService } from "./app/app.service";
 import { RateLimitModule } from './rate_limit/rate_limit.module';
 
 @Module({
@@ -11,7 +10,7 @@ import { RateLimitModule } from './rate_limit/rate_limit.module';
     RateLimitModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CustomLogger],
+  providers: [CustomLogger],
   exports: [CustomLogger],
 })
 

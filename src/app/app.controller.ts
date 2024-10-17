@@ -6,8 +6,15 @@ export class AppController {
   constructor(private readonly logger: CustomLogger) {}
 
   @Get()
-  getHello(): string {
-    this.logger.log('Hello World');
-    return 'Hello World!';
+  getHello() {
+    this.logger.log('Welcome to API Simplify version 1.0');
+
+    return {
+      status: 'Success',
+      message: 'Welcome to API Simplify',
+      data: {
+        version: '1.0',
+      }
+    }
   }
 }
