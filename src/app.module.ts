@@ -2,15 +2,20 @@ import { Module } from "@nestjs/common";
 import { DatabaseModule } from "./database/database.module";
 import { CustomLogger } from "./logger/logger.service";
 import { AppController } from "./app/app.controller";
-import { RateLimitModule } from './rate_limit/rate_limit.module';
+import { ThrottleModule } from './throttle/throttle.module';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [
     DatabaseModule,
-    RateLimitModule,
+    ThrottleModule,
   ],
   controllers: [AppController],
-  providers: [CustomLogger],
+  providers: [CustomLogger, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }],
   exports: [CustomLogger],
 })
 

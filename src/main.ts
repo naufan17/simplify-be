@@ -1,25 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ThrottlerExceptionFilter } from './common/filters/throttler-exception/throttler-exception.filter';
+import { InternalServerErrorExceptionFilter } from './common/filters/internal-server-error-exception/internal-server-error-exception.filter';
+import { NotFoundExceptionFilter } from './common/filters/not-found-exception/not-found-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 8000;
-  const hostname = process.env.HOSTNAME || 'localhost';
+  const app: INestApplication = await NestFactory.create(AppModule);
+  const port: number = Number(process.env.PORT) || 8000;
+  const hostname:string = process.env.HOSTNAME || 'localhost';
 
   app.use(helmet());
   app.enableCors();
   app.setGlobalPrefix('api');
 
-  // URI versioning
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1.0',
     prefix: 'v',
   });
 
-  // Global validation pipes
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     transformOptions: {
@@ -27,6 +28,12 @@ async function bootstrap() {
     }
   }));
   
+  app.useGlobalFilters(
+    new ThrottlerExceptionFilter(),
+    new NotFoundExceptionFilter(),
+    new InternalServerErrorExceptionFilter()
+  );
+
   await app.listen(port);
 
   console.log(`⚡️[server]: Server is running at http://${hostname}:${port}`);

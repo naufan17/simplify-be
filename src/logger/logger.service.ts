@@ -1,36 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, LoggerService } from '@nestjs/common';
-import * as winston from 'winston';
+import { createLogger, format, Logger, transports } from 'winston';
 import 'winston-daily-rotate-file'
 
 @Injectable()
 export class CustomLogger implements LoggerService {
-  private logger: winston.Logger;
+  private logger: Logger;
 
   constructor() {
-    const transport = new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message }) => {
-          return `${timestamp} ${level}: ${message}`;
-        }),
-      ),
+    const transport: transports.ConsoleTransportInstance = new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.timestamp(),
+        format.printf(({ timestamp, level, message }) => {
+          return `${timestamp} [${level}]: ${message}`;
+        })
+      )
     })
 
-    const fileTransport = new winston.transports.DailyRotateFile({
+    const fileTransport = new transports.DailyRotateFile({
       filename: 'logs/%DATE%-results.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
+      format: format.combine(
+        format.timestamp(),
+        format.json()
       )
     });
 
-    this.logger = winston.createLogger({
+    this.logger = createLogger({
       level: 'info',
       transports: [transport, fileTransport],
     });
