@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "./database/database.module";
-import { AppController } from "./app/app.controller";
-import { ThrottleModule } from './throttle/throttle.module';
+import { DatabaseModule } from "../config/database/database.module";
+import { AppController } from "./app.controller";
+import { ThrottleModule } from '../config/throttle/throttle.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { LoggingInterceptor } from "./common/interceptors/logging/logging.interceptor";
-import { LoggerModule } from './logger/logger.module';
+import { LoggingInterceptor } from "../common/interceptors/logging/logging.interceptor";
+import { LoggerModule } from '../config/logger/logger.module';
 
 @Module({
   imports: [

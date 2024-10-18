@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 import helmet from 'helmet';
 import compression from 'compression';
 import { INestApplication, VersioningType } from '@nestjs/common';

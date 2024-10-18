@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
-import { AppModule } from '../app.module';
+import { AppModule } from '../../app/app.module';
 
 describe('Database Connection', () => {
   let dataSource: DataSource;

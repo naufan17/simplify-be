@@ -6,9 +6,9 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 @Module({
   imports: [
     WinstonModule.forRoot({
-      level: process.env.NODE_ENV === 'production' ? 'error' : 'debug',
       transports: [
         new transports.Console({
+          level: 'info',
           format: format.combine(
             format.colorize(),
             format.timestamp(),
@@ -18,7 +18,20 @@ import DailyRotateFile from 'winston-daily-rotate-file';
           )
         }),
         new DailyRotateFile({
-          filename: 'logs/%DATE%-results.log',
+          level: 'info',
+          filename: 'logs/%DATE%-combined.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+          format: format.combine(
+            format.timestamp(),
+            format.json()
+          )
+        }),
+        new DailyRotateFile({
+          level: 'error',
+          filename: 'logs/%DATE%-error.log',
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxSize: '20m',
