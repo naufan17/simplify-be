@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import compression from 'compression';
+import { INestApplication, VersioningType } from '@nestjs/common';
 import { ThrottlerExceptionFilter } from './common/filters/throttler-exception/throttler-exception.filter';
 import { InternalServerErrorExceptionFilter } from './common/filters/internal-server-error-exception/internal-server-error-exception.filter';
 import { NotFoundExceptionFilter } from './common/filters/not-found-exception/not-found-exception.filter';
@@ -9,9 +10,10 @@ import { NotFoundExceptionFilter } from './common/filters/not-found-exception/no
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   const port: number = Number(process.env.PORT) || 8000;
-  const hostname:string = process.env.HOSTNAME || 'localhost';
+  const hostname: string = process.env.HOSTNAME || 'localhost';
 
   app.use(helmet());
+  app.use(compression())
   app.enableCors();
   app.setGlobalPrefix('api');
 
@@ -20,13 +22,6 @@ async function bootstrap() {
     defaultVersion: '1.0',
     prefix: 'v',
   });
-
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    transformOptions: {
-      enableImplicitConversion: true
-    }
-  }));
   
   app.useGlobalFilters(
     new ThrottlerExceptionFilter(),

@@ -1,14 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { CustomLogger } from '../logger/logger.service';
+import { Controller, Get, Inject, LoggerService } from '@nestjs/common';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller()
 export class AppController {
-  constructor(private readonly logger: CustomLogger) {}
+  constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService) {}
 
   @Get()
   getHello() {
-    this.logger.log('Welcome to API Simplify version 1.0');
-
     return {
       status: 'Success',
       message: 'Welcome to API Simplify',
