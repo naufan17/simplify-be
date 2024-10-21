@@ -3,7 +3,10 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Controller()
 export class AppController {
-  constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) 
+    private readonly logger: LoggerService
+  ) {}
 
   @Get()
   getHello() {

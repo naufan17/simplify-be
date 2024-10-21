@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from 'src/modules/user/user.entity';
 
 @Module({
   imports: [
@@ -23,11 +24,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
           ? { rejectUnauthorized: false } 
           : false,  
         },
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        migrations: [__dirname + '/migrations/*{.ts,.js}'],
-        subscribers: [__dirname + '/subscribers/*{.ts,.js}'],
+        entities: [User],
+        // migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        // subscribers: [__dirname + '/subscribers/*{.ts,.js}'],
       }),
-    })
+    }),
   ]
 })
 

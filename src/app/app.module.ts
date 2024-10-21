@@ -6,19 +6,22 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { LoggerModule } from '../config/logger/logger.module';
 import { LoggingMiddleware } from "src/common/middleware/logging/logging.middleware";
+import { AuthModule } from "src/modules/auth/auth.module";
+import { AppService } from './app.service';
 
 @Module({
   imports: [
     DatabaseModule,
     ThrottleModule,
     LoggerModule,
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [ 
+  providers: [AppService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
-    }
+    }, 
   ],
 })
 
