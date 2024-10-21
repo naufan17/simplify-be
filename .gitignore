@@ -1,6 +1,16 @@
+# Node modules
 /node_modules
+
+# Transpilled output
 /dist
+
+# Logs
 /logs
+*.log
+
+# Test coverage reports
 /coverage
 
-.env*
+# Environment files
+.env
+.env.*
