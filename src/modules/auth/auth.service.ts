@@ -32,13 +32,25 @@ export class AuthService {
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
 
-    const accessToken: string = this.tokenService.generateAccessToken({ name: user.id });
-    const refreshToken: string = this.tokenService.generateRefreshToken({ name: user.id });
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
+    const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
     if (!accessToken || !refreshToken) throw new InternalServerErrorException();
 
     return {
       access_token: accessToken,
       refresh_token: refreshToken
     }
+  }
+
+  async refreshAccessToken(refresh_token: string): Promise<{ access_token: string }> {
+    const refreshToken: any = await this.tokenService.verifyRefreshToken(refresh_token);
+    if (!refreshToken) throw new UnauthorizedException('Invalid refresh token');
+
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshToken.sub });
+    if (!accessToken) throw new InternalServerErrorException();
+
+    return { 
+      access_token: accessToken 
+    };
   }
 }

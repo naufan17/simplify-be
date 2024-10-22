@@ -1,8 +1,8 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { Response } from 'express'
+import { Request, Response } from 'express'
 
 @Controller('auth')
 export class AuthController {
@@ -39,6 +39,20 @@ export class AuthController {
       data: { 
         access_token
       },
+    });
+  }
+
+  @Get('refresh-access-token')
+  async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
+    const refresh_token: string = req.cookies['refresh_token'];
+    const { access_token }: { access_token: string } = await this.authService.refreshAccessToken(refresh_token);
+
+    return res.status(HttpStatus.OK).json({ 
+      status: 'Ok',
+      message: 'Access token refreshed successfully',
+      data: {
+        access_token
+      }
     });
   }
 }

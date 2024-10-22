@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { INestApplication, VersioningType } from '@nestjs/common';
 import { ThrottlerExceptionFilter } from './common/filters/throttler-exception/throttler-exception.filter';
 import { InternalServerErrorExceptionFilter } from './common/filters/internal-server-error-exception/internal-server-error-exception.filter';
@@ -13,7 +14,8 @@ async function bootstrap() {
   const hostname: string = process.env.HOSTNAME || 'localhost';
 
   app.use(helmet());
-  app.use(compression())
+  app.use(compression());
+  app.use(cookieParser());
   app.enableCors();
   app.setGlobalPrefix('api');
 

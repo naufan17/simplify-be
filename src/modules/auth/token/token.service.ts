@@ -23,4 +23,16 @@ export class TokenService {
       expiresIn: this.configService.get<string>('REFRESH_TOKEN_EXPIRES'),
     });
   }
+
+  verifyAccessToken(access_token: any): any {
+    return this.jwtService.verify(access_token, {
+      secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
+    });
+  }
+
+  verifyRefreshToken(refresh_token: string): any {
+    return this.jwtService.verify(refresh_token, {
+      secret: this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
+    });
+  }
 }
