@@ -2,13 +2,16 @@
 import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../user/user.repository';
 import bcrypt from 'bcryptjs';
-import { User } from '../user/user.entity';
+import { User } from '../user/entitiy/user.entity';
 import { TokenService } from './token/token.service';
+import { SessionRepository } from '../user/session.repository';
+import { Session } from '../user/entitiy/session.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly sessionRepository: SessionRepository,
     private readonly tokenService: TokenService
   ) {}
 
@@ -25,8 +28,8 @@ export class AuthService {
     return true;
   }
 
-  async login(email: string, password: string): Promise<{ access_token: string, refresh_token: string }> {
-    const user: User | null = await this.userRepository.findPasswordByEmail(email);
+  async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ access_token: string, refresh_token: string }> {
+    const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new ConflictException('User does not exist');
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
@@ -35,6 +38,9 @@ export class AuthService {
     const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
     const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
     if (!accessToken || !refreshToken) throw new InternalServerErrorException();
+
+    const session: Session = await this.sessionRepository.createSession(user.id, ipAddress, userAgent, new Date());
+    if (!session) throw new InternalServerErrorException();
 
     return {
       access_token: accessToken,

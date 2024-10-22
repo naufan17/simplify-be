@@ -22,9 +22,11 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+  async login(@Body() loginDto: LoginDto, @Req() req: Request, @Res() res: Response) {
     const { email, password }: { email: string, password: string } = loginDto;
-    const { access_token, refresh_token }: { access_token: string, refresh_token: string } = await this.authService.login(email, password);
+    const ipAddress: string | undefined = req.ip;
+    const userAgent: string | undefined = req.headers['user-agent'];
+    const { access_token, refresh_token }: { access_token: string, refresh_token: string } = await this.authService.login(email, password, ipAddress, userAgent);
 
     res.cookie('refresh_token', refresh_token, { 
       httpOnly: true,
