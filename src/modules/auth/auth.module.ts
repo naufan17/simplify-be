@@ -6,19 +6,15 @@ import { PassportModule } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UserRepository } from '../user/user.repository';
+import { TokenService } from './token/token.service';
 
 @Module({
   imports: [
     PassportModule,
     TypeOrmModule.forFeature([User]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET_ACCESS_TOKEN,
-      signOptions: { 
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRES 
-      },
-    }),
+    JwtModule,
   ],
-  providers: [AuthService, UserRepository],
+  providers: [AuthService, UserRepository, TokenService],
   controllers: [AuthController]
 })
 export class AuthModule {}

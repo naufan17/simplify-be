@@ -14,6 +14,10 @@ export class UserRepository {
     return await this.userRepository.findOne({ where: { email } });
   }
 
+  async findPasswordByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { email }, select: ['password'] });
+  }
+
   async save(name: string, email: string, hashedPassword: string): Promise<User> {
     const user = this.userRepository.create({ name, email, password: hashedPassword });
     return await this.userRepository.save(user);
