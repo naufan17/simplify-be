@@ -63,6 +63,16 @@ export class AuthService {
     return { accessToken };
   }
 
+  async logout(refreshToken: string): Promise<boolean> {
+    const session = this.sessionRepository.findByRefreshToken(refreshToken);
+    if (!session) throw new UnauthorizedException('Invalid refresh token');
+
+    const sessionExpire = this.sessionRepository.endSession(refreshToken, new Date());
+    if (!sessionExpire) throw new InternalServerErrorException();
+
+    return true;
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new ConflictException('User does not exist');

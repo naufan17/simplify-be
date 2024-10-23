@@ -10,6 +10,7 @@ import { Session } from '../user/entitiy/session.entity';
 import { LocalStrategy } from './strategy/local.strategy';
 import { SessionRepository } from '../user/repository/session.repository';
 import { UserRepository } from '../user/repository/user.repository';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { UserRepository } from '../user/repository/user.repository';
     JwtModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, TokenService, LocalStrategy, SessionRepository, UserRepository],
+  providers: [AuthService, TokenService, JwtStrategy, LocalStrategy, SessionRepository, UserRepository],
 })
 
 export class AuthModule {}

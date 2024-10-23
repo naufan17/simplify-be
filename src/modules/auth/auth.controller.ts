@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 // import { LocalAuthGuard } from './guard/local-auth.guard';
 
 @Controller('auth')
@@ -49,7 +50,9 @@ export class AuthController {
 
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
-    const refreshToken: string = req.cookies['refreshToken'];
+    const refreshToken: string | null = req.cookies['refreshToken'];
+    if (!refreshToken) throw new Error('Refresh token not found');
+
     const { accessToken }: { accessToken: string } = await this.authService.refreshAccessToken(refreshToken);
 
     return res.status(HttpStatus.OK).json({ 
@@ -58,6 +61,21 @@ export class AuthController {
       data: {
         accessToken
       }
+    });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('logout')
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const refreshToken: string | null = req.cookies['refreshToken'];
+    if (!refreshToken) throw new Error('Refresh token not found');
+
+    await this.authService.logout(refreshToken);
+    res.clearCookie('refreshToken');
+
+    return res.status(HttpStatus.OK).json({
+      status: 'Ok',
+      message: 'User logged out successfully',
     });
   }
 }
