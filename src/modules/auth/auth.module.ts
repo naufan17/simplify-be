@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { User } from '../user/entitiy/user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { UserRepository } from '../user/user.repository';
 import { TokenService } from './token/token.service';
 import { Session } from '../user/entitiy/session.entity';
-import { SessionRepository } from '../user/session.repository';
+import { LocalStrategy } from './strategy/local.strategy';
+import { SessionRepository } from '../user/repository/session.repository';
+import { UserRepository } from '../user/repository/user.repository';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { SessionRepository } from '../user/session.repository';
     TypeOrmModule.forFeature([User, Session]),
     JwtModule,
   ],
-  providers: [AuthService, TokenService, UserRepository, SessionRepository],
-  controllers: [AuthController]
+  controllers: [AuthController],
+  providers: [AuthService, TokenService, LocalStrategy, SessionRepository, UserRepository],
 })
+
 export class AuthModule {}

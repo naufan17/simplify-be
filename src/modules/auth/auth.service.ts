@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
-import { UserRepository } from '../user/user.repository';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { UserRepository } from '../user/repository/user.repository';
 import bcrypt from 'bcryptjs';
 import { User } from '../user/entitiy/user.entity';
 import { TokenService } from './token/token.service';
-import { SessionRepository } from '../user/session.repository';
+import { SessionRepository } from '../user/repository/session.repository';
 import { Session } from '../user/entitiy/session.entity';
 
 @Injectable()
@@ -28,9 +29,9 @@ export class AuthService {
     return true;
   }
 
-  async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ access_token: string, refresh_token: string }> {
+  async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, refreshToken: string }> {
     const user: User | null = await this.userRepository.findByEmail(email);
-    if (!user) throw new ConflictException('User does not exist');
+    if (!user) throw new NotFoundException('User not found');
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
@@ -42,21 +43,32 @@ export class AuthService {
     const session: Session = await this.sessionRepository.createSession(user.id, ipAddress, userAgent, new Date());
     if (!session) throw new InternalServerErrorException();
 
-    return {
-      access_token: accessToken,
-      refresh_token: refreshToken
-    }
+    return { accessToken, refreshToken }
   }
 
-  async refreshAccessToken(refresh_token: string): Promise<{ access_token: string }> {
+  async refreshAccessToken(refresh_token: string): Promise<{ accessToken: string }> {
     const refreshToken: any = await this.tokenService.verifyRefreshToken(refresh_token);
     if (!refreshToken) throw new UnauthorizedException('Invalid refresh token');
 
     const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshToken.sub });
     if (!accessToken) throw new InternalServerErrorException();
 
-    return { 
-      access_token: accessToken 
-    };
+    return { accessToken };
+  }
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user: User | null = await this.userRepository.findByEmail(email);
+    if (!user) throw new ConflictException('User does not exist');
+
+    const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
+    if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
+
+    if (user && isPasswordValid === true) {
+      const { password, ...result } = user;
+
+      return result;
+    }
+
+    return null;
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Session } from "./session.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Session } from "./session.entity";
 
 @Entity('users')
 export class User {
@@ -26,5 +26,5 @@ export class User {
   deletedAt?: Date;
 
   @OneToMany(() => Session, (session: any) => session.user)
-  sessions?: Session[]
+  session?: Session[]
 }

@@ -7,7 +7,7 @@ export class Session {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, (user: any) => user.sessions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user: any) => user.session, { onDelete: 'CASCADE' })
   user!: User;
 
   @Column({ length: 45, nullable: true })

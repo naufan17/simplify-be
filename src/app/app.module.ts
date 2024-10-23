@@ -8,13 +8,15 @@ import { LoggerModule } from '../config/logger/logger.module';
 import { LoggingMiddleware } from "src/common/middleware/logging/logging.middleware";
 import { AuthModule } from "src/modules/auth/auth.module";
 import { AppService } from './app.service';
+import { UserModule } from "src/modules/user/user.module";
 
 @Module({
   imports: [
     DatabaseModule,
     ThrottleModule,
     LoggerModule,
-    AuthModule
+    AuthModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService,
