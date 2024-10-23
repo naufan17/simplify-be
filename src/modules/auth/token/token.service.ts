@@ -24,14 +24,14 @@ export class TokenService {
     });
   }
 
-  verifyAccessToken(access_token: any): any {
-    return this.jwtService.verify(access_token, {
+  verifyAccessToken(accessToken: string): any {
+    return this.jwtService.verify(accessToken, {
       secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
     });
   }
 
-  verifyRefreshToken(refresh_token: string): any {
-    return this.jwtService.verify(refresh_token, {
+  verifyRefreshToken(refreshToken: string): any {
+    return this.jwtService.verify(refreshToken, {
       secret: this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
     });
   }

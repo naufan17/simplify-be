@@ -40,17 +40,24 @@ export class AuthService {
     const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
     if (!accessToken || !refreshToken) throw new InternalServerErrorException();
 
-    const session: Session = await this.sessionRepository.createSession(user.id, ipAddress, userAgent, new Date());
+    const session: Session = await this.sessionRepository.createSession(user.id, refreshToken, ipAddress, userAgent, new Date(), new Date(), new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
     if (!session) throw new InternalServerErrorException();
 
     return { accessToken, refreshToken }
   }
 
-  async refreshAccessToken(refresh_token: string): Promise<{ accessToken: string }> {
-    const refreshToken: any = await this.tokenService.verifyRefreshToken(refresh_token);
-    if (!refreshToken) throw new UnauthorizedException('Invalid refresh token');
+  async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string }> {
+    const refreshTokenPayload: any = await this.tokenService.verifyRefreshToken(refreshToken);
+    if (!refreshTokenPayload) throw new UnauthorizedException('Invalid refresh token');
 
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshToken.sub });
+    const sessionExpire: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
+    if (!sessionExpire) throw new UnauthorizedException('Invalid refresh token');
+    if (sessionExpire.expireAt < new Date()) throw new UnauthorizedException('Refresh token expired');
+
+    const session: Session = await this.sessionRepository.updateSession(refreshToken, new Date());
+    if (!session) throw new InternalServerErrorException();
+
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshTokenPayload.sub });
     if (!accessToken) throw new InternalServerErrorException();
 
     return { accessToken };
@@ -65,7 +72,6 @@ export class AuthService {
 
     if (user && isPasswordValid === true) {
       const { password, ...result } = user;
-
       return result;
     }
 

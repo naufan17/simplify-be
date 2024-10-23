@@ -9,8 +9,35 @@ export class AppService implements OnModuleInit {
     try {
       await this.dataSource.query(`SELECT 1 + 1 AS result`);
       console.log('⚡️[server]: Database connected');
+
+      // Reset all tables in the database
+      // await this.resetDatabase();
     } catch (error) {
       console.error('⚡️[server]: Database connection failed :', error);
+    }
+  }
+
+  async resetDatabase() {
+    try {
+      // Disable foreign key checks (optional, for safety)
+      await this.dataSource.query(`SET session_replication_role = 'replica';`);
+
+      // Drop all tables
+      const tables = await this.dataSource.query(`
+        SELECT tablename FROM pg_tables WHERE schemaname = 'public';
+      `);
+      
+      for (const table of tables) {
+        await this.dataSource.query(`DROP TABLE IF EXISTS "${table.tablename}" CASCADE;`);
+        console.log(`Dropped table: ${table.tablename}`);
+      }
+
+      // Re-enable foreign key checks
+      await this.dataSource.query(`SET session_replication_role = 'origin';`);
+
+      console.log('⚡️[server]: All tables have been dropped successfully.');
+    } catch (error) {
+      console.error('⚡️[server]: Failed to reset database:', error);
     }
   }
 }

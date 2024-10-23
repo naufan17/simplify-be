@@ -7,13 +7,13 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
   
-  @Column()
+  @Column({ type:'text' })
   name!: string;
 
   @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({ type: 'text' })
   password!: string;
 
   @CreateDateColumn({ type: 'timestamp' })

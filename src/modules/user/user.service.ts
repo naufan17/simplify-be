@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './repository/user.repository';
 import { SessionRepository } from './repository/session.repository';
@@ -18,10 +19,14 @@ export class UserService {
     return user;
   }
 
-  async getLastActivity(userId: string) {
-    const session: Session[] | null = await this.sessionRepository.findById(userId);
-    if (!session) throw new NotFoundException('User session not found');
+  async getSession(userId: string) {
+    const session: Session[] = await this.sessionRepository.findById(userId);
+    if (session.length === 0) throw new NotFoundException('User session not found');
       
-    return session;
+    return session.map(sessions => {
+      const isActive = new Date() < new Date(sessions.expireAt);
+      const { expireAt, ...sessionsData } = sessions;
+      return { ...sessionsData, status: isActive ? 'active' : 'expired' };
+    });
   }
 }
