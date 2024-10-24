@@ -15,7 +15,7 @@ export class UserRepository {
   }
 
   async findById(userId: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id: userId }, select: ['id', 'name', 'email' ] });
+    return await this.userRepository.findOne({ where: { id: userId }, select: ['name', 'email' ] });
   }
 
   async save(name: string, email: string, hashedPassword: string): Promise<User> {

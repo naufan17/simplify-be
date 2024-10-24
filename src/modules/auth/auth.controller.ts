@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -12,7 +12,6 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @UsePipes(new ValidationPipe({ transform: true }))
   async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
     const { name, email, password }: { name: string, email: string, password: string } = registerDto;
     await this.authService.register(name, email, password);
@@ -53,7 +52,7 @@ export class AuthController {
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const refreshToken: string | null = req.cookies['refreshToken'];
-    if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
+    if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
     const { accessToken }: { accessToken: string } = await this.authService.refreshAccessToken(refreshToken);
 
@@ -70,7 +69,7 @@ export class AuthController {
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     const refreshToken: string | null = req.cookies['refreshToken'];
-    if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
+    if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
     await this.authService.logout(refreshToken);
     res.clearCookie('refreshToken');
