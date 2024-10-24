@@ -4,9 +4,6 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
-import { ThrottlerExceptionFilter } from './common/filters/throttler-exception/throttler-exception.filter';
-import { InternalServerErrorExceptionFilter } from './common/filters/internal-server-error-exception/internal-server-error-exception.filter';
-// import { NotFoundExceptionFilter } from './common/filters/not-found-exception/not-found-exception.filter';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
@@ -31,12 +28,6 @@ async function bootstrap() {
       enableImplicitConversion: true
     }
   }));
-  
-  app.useGlobalFilters(
-    new ThrottlerExceptionFilter(),
-    // new NotFoundExceptionFilter(),
-    new InternalServerErrorExceptionFilter()
-  );
 
   await app.listen(port);
 

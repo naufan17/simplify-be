@@ -26,8 +26,6 @@ import { User } from 'src/modules/user/entitiy/user.entity';
           : false,  
         },
         entities: [User, Session],
-        // migrations: [__dirname + '/migrations/*{.ts,.js}'],
-        // subscribers: [__dirname + '/subscribers/*{.ts,.js}'],
       }),
     }),
   ]
