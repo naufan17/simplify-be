@@ -1,9 +1,8 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
 // import { LocalAuthGuard } from './guard/local-auth.guard';
 
 @Controller('auth')
@@ -13,13 +12,15 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @UsePipes(new ValidationPipe({ transform: true }))
   async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
     const { name, email, password }: { name: string, email: string, password: string } = registerDto;
     await this.authService.register(name, email, password);
 
     return res.status(HttpStatus.CREATED).json({
-      status: 'Created',
       message: 'User created successfully',
+      success: 'Created',
+      statusCode: HttpStatus.CREATED,
     });  
   }
 
@@ -39,8 +40,9 @@ export class AuthController {
     });
 
     return res.status(HttpStatus.OK).json({
-      status: 'Ok',
       message: 'User logged in successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
       data: { 
         accessToken
       },
@@ -51,31 +53,32 @@ export class AuthController {
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const refreshToken: string | null = req.cookies['refreshToken'];
-    if (!refreshToken) throw new Error('Refresh token not found');
+    if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
 
     const { accessToken }: { accessToken: string } = await this.authService.refreshAccessToken(refreshToken);
 
     return res.status(HttpStatus.OK).json({ 
-      status: 'Ok',
       message: 'Access token refreshed successfully',
+      statusCode: HttpStatus.OK,
+      success: 'Ok',
       data: {
         accessToken
       }
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     const refreshToken: string | null = req.cookies['refreshToken'];
-    if (!refreshToken) throw new Error('Refresh token not found');
+    if (!refreshToken) throw new UnauthorizedException('Refresh token not found');
 
     await this.authService.logout(refreshToken);
     res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
-      status: 'Ok',
       message: 'User logged out successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK
     });
   }
 }

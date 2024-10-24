@@ -75,7 +75,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user: User | null = await this.userRepository.findByEmail(email);
-    if (!user) throw new ConflictException('User does not exist');
+    if (!user) throw new NotFoundException('User does not exist');
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');

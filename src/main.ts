@@ -3,10 +3,10 @@ import { AppModule } from './app/app.module';
 import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { INestApplication, VersioningType } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ThrottlerExceptionFilter } from './common/filters/throttler-exception/throttler-exception.filter';
 import { InternalServerErrorExceptionFilter } from './common/filters/internal-server-error-exception/internal-server-error-exception.filter';
-import { NotFoundExceptionFilter } from './common/filters/not-found-exception/not-found-exception.filter';
+// import { NotFoundExceptionFilter } from './common/filters/not-found-exception/not-found-exception.filter';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
@@ -24,10 +24,17 @@ async function bootstrap() {
     defaultVersion: '1.0',
     prefix: 'v',
   });
+
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    transformOptions: {
+      enableImplicitConversion: true
+    }
+  }));
   
   app.useGlobalFilters(
     new ThrottlerExceptionFilter(),
-    new NotFoundExceptionFilter(),
+    // new NotFoundExceptionFilter(),
     new InternalServerErrorExceptionFilter()
   );
 
