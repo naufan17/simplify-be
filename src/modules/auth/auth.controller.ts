@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
-// import { LocalAuthGuard } from './guard/local-auth.guard';
+// import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,9 +42,7 @@ export class AuthController {
       message: 'User logged in successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { 
-        accessToken
-      },
+      data: { accessToken },
     });
     // console.log(req.user);
   }
@@ -60,9 +58,7 @@ export class AuthController {
       message: 'Access token refreshed successfully',
       statusCode: HttpStatus.OK,
       success: 'Ok',
-      data: {
-        accessToken
-      }
+      data: { accessToken }
     });
   }
 

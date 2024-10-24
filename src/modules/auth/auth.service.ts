@@ -50,12 +50,12 @@ export class AuthService {
     const refreshTokenPayload: any = await this.tokenService.verifyRefreshToken(refreshToken);
     if (!refreshTokenPayload) throw new UnauthorizedException('Invalid refresh token');
 
-    const sessionExpire: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
-    if (!sessionExpire) throw new UnauthorizedException('Invalid refresh token');
-    if (sessionExpire.expireAt < new Date()) throw new UnauthorizedException('Refresh token expired');
+    const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
+    if (!session) throw new UnauthorizedException('Invalid refresh token');
+    if (session.expireAt < new Date()) throw new UnauthorizedException('Refresh token expired');
 
-    const session: Session = await this.sessionRepository.updateSession(refreshToken, new Date());
-    if (!session) throw new InternalServerErrorException();
+    const sessionUpdate: any = await this.sessionRepository.updateSession(refreshToken, new Date());
+    if (!sessionUpdate) throw new InternalServerErrorException();
 
     const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshTokenPayload.sub });
     if (!accessToken) throw new InternalServerErrorException();
@@ -64,10 +64,10 @@ export class AuthService {
   }
 
   async logout(refreshToken: string): Promise<boolean> {
-    const session = this.sessionRepository.findByRefreshToken(refreshToken);
+    const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
 
-    const sessionExpire = this.sessionRepository.endSession(refreshToken, new Date());
+    const sessionExpire: any = this.sessionRepository.endSession(refreshToken, new Date());
     if (!sessionExpire) throw new InternalServerErrorException();
 
     return true;

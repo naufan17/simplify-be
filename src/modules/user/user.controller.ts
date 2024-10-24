@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, HttpStatus, Req, Res, UseGuards } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guard/auth/jwt-auth.guard';
 import { User } from './entitiy/user.entity';
-
-interface AuthenticatedRequest extends Request {
-  user: { sub: string };
-}
+import { AuthenticatedRequest } from 'src/types/authenticated-request';
 
 @Controller('user')
 export class UserController {
