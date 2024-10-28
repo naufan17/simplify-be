@@ -109,7 +109,7 @@
   },
   "include": [
     "src/**/*"
-  ],
+, "src/data-source.ts"  ],
   "exclude": [
     "node_modules", 
     "dist"

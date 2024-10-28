@@ -25,6 +25,7 @@ import { User } from 'src/modules/user/entitiy/user.entity';
           ? { rejectUnauthorized: false } 
           : false,  
         },
+        timezone: configService.get<string>('DATABASE_TIMEZONE'),
         entities: [User, Session],
       }),
     }),

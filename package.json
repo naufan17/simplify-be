@@ -10,7 +10,8 @@
     "build": "nest build -p tsconfig.build.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "Muhammad Naufan Athoillah",
