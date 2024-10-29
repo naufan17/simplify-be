@@ -13,7 +13,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
-    const { name, email, password }: { name: string, email: string, password: string } = registerDto;
+    const { name, email, password }: RegisterDto = registerDto;
     await this.authService.register(name, email, password);
 
     return res.status(HttpStatus.CREATED).json({
@@ -26,7 +26,7 @@ export class AuthController {
   // @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Req() req: Request, @Res() res: Response) {
-    const { email, password }: { email: string, password: string } = loginDto;
+    const { email, password }: LoginDto = loginDto;
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
     const { accessToken, refreshToken }: { accessToken: string, refreshToken: string } = await this.authService.login(email, password, ipAddress, userAgent);

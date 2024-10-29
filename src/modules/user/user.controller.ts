@@ -20,7 +20,7 @@ export class UserController {
       message: 'User profile fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: user,
+      data: { user },
     });
   }
 
@@ -34,7 +34,7 @@ export class UserController {
       message: 'User session fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: session,
+      data: { session },
     });
   }
 }

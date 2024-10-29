@@ -9,6 +9,7 @@ import { LoggingMiddleware } from "src/common/middleware/logging/logging.middlew
 import { AuthModule } from "src/modules/auth/auth.module";
 import { AppService } from './app.service';
 import { UserModule } from "src/modules/user/user.module";
+import { QrcodeModule } from "src/modules/qrcode/qrcode.module";
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { UserModule } from "src/modules/user/user.module";
     ThrottleModule,
     LoggerModule,
     AuthModule,
-    UserModule
+    UserModule,
+    QrcodeModule,
   ],
   controllers: [AppController],
   providers: [AppService,
