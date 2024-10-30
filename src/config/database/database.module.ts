@@ -27,7 +27,7 @@ import { User } from 'src/modules/user/entitiy/user.entity';
         },
         timezone: configService.get<string>('DATABASE_TIMEZONE'),
         entities: [User, Session],
-        migrations: ['database/migrations/*.ts'],
+        migrations: ['../../../database/migrations/*.ts'],
       }),
     }),
   ]
