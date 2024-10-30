@@ -6,6 +6,7 @@ import { UrlDto } from './dto/url.dto';
 import { EmailDto } from './dto/email.dto';
 import { WhatsappDto } from './dto/whatsapp.dto';
 import { SocialMediaDto } from './dto/socialMedia.dto';
+import { WifiDto } from './dto/wifi.dto'
 
 @Controller('qrcode')
 export class QrcodeController {
@@ -57,6 +58,19 @@ export class QrcodeController {
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code whatsapp generated successfully',
+      success: 'Created',
+      statusCode: HttpStatus.CREATED,
+      data: { qrcode },
+    });
+  }
+
+  @Post('wifi')
+  async wifiQrcode(@Body() wifiDto: WifiDto, @Req() req: Request, @Res() res: Response) {
+    const { ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: WifiDto = wifiDto;
+    const qrcode = await this.qrcodeService.wifiQrcode(ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+
+    return res.status(HttpStatus.CREATED).json({
+      message: 'Qr code wifi generated successfully',
       success: 'Created',
       statusCode: HttpStatus.CREATED,
       data: { qrcode },

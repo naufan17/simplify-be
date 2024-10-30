@@ -36,20 +36,49 @@ export class QrcodeService {
     return qrcode;
   }
 
+  async wifiQrcode(ssid: string, password: string | undefined, encryption: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined) {
+    const formattedWifi = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
+    const qrcode: any = await this.generateQrcode(formattedWifi, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    if (!qrcode) throw new InternalServerErrorException();
+
+    return qrcode;
+  }
+
   async socialMediaQrcode(socialMedia: string, username: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined) {
     let url: string;
+    // let image: string;
     switch (socialMedia) {
       case 'instagram':
         url = `https://www.${socialMedia}.com/${username}`
+        // image = 'https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg'
+        dotsColor = '#ffffff'
+        backgroundColor = '#d62976'
+        cornersSquareColor = '#ffffff'
+        cornersDotColor = '#ffffff'
         break;
       case 'facebook':
         url = `https://www.${socialMedia}.com/${username}`
+        // image = 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'
+        dotsColor = '#ffffff'
+        backgroundColor = '#1877F2'
+        cornersSquareColor = '#ffffff'
+        cornersDotColor = '#ffffff'
         break;
-      case 'twitter':
+      case 'x':
         url = `https://www.${socialMedia}.com/${username}`
+        // image = 'https://upload.wikimedia.org/wikipedia/commons/b/b7/X_logo.jpg'
+        dotsColor = '#ffffff'
+        backgroundColor = '#000000'
+        cornersSquareColor = '#ffffff'
+        cornersDotColor = '#ffffff'
         break;
       case 'linkedin':
         url = `https://www.${socialMedia}.com/in/${username}`
+        // image = 'https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg'
+        dotsColor = '#ffffff'
+        backgroundColor = '#0077B5'
+        cornersSquareColor = '#ffffff'
+        cornersDotColor = '#ffffff'
         break;
       default:
         throw new NotFoundException('Invalid social media');
@@ -66,12 +95,17 @@ export class QrcodeService {
       jsdom: JSDOM,
       nodeCanvas,
       data: payload,
+      // image: image || '',
       width: size || 300,
       height: size || 300,
       margin: margin || 6,
       qrOptions: {
         errorCorrectionLevel: 'H'
       },
+      // imageOptions: {
+      //   imageSize: 0.25,
+      //   crossOrigin: 'anonymous',
+      // },
       dotsOptions: {
         color: dotsColor || '#000000',
         type: dotsType || 'square'

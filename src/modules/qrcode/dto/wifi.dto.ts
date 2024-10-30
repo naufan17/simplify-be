@@ -1,15 +1,18 @@
-import { IsEnum, IsHexColor, IsLowercase, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsHexColor, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class SocialMediaDto {
+export class WifiDto {
   @IsNotEmpty()
-  @IsLowercase()
-  @IsEnum(['facebook', 'instagram', 'x', 'linkedin'])
-  socialMedia!: string;
-
   @IsString()
-  @IsNotEmpty()
-  username!: string;
+  ssid!: string;
 
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsNotEmpty() 
+  @IsEnum(['WPA', 'WEP', 'nopass'])
+  encryption!: string;
+  
   @IsOptional()
   @IsNumber()
   size?: number;
