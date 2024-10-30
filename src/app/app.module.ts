@@ -10,6 +10,7 @@ import { AuthModule } from "src/modules/auth/auth.module";
 import { AppService } from './app.service';
 import { UserModule } from "src/modules/user/user.module";
 import { QrcodeModule } from "src/modules/qrcode/qrcode.module";
+import { ShortenUrlModule } from "src/modules/shorten-url/shorten-url.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { QrcodeModule } from "src/modules/qrcode/qrcode.module";
     AuthModule,
     UserModule,
     QrcodeModule,
+    ShortenUrlModule
   ],
   controllers: [AppController],
   providers: [AppService,

@@ -3,7 +3,7 @@ import { AppModule } from './app/app.module';
 import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication, RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
@@ -14,7 +14,12 @@ async function bootstrap() {
   app.use(compression());
   app.use(cookieParser());
   app.enableCors();
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [{
+      path: '/:urlId',
+      method: RequestMethod.GET
+    }]
+  });
 
   app.enableVersioning({
     type: VersioningType.URI,

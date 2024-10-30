@@ -15,7 +15,7 @@ export class QrcodeController {
   @Post('text')
   async textQrcode(@Body() textDto: TextDto, @Req() req: Request, @Res() res: Response) {
     const { text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: TextDto = textDto;
-    const qrcode = await this.qrcodeService.textQrcode(text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.textQrcode(text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code text generated successfully',
@@ -28,7 +28,7 @@ export class QrcodeController {
   @Post('url')
   async urlQrcode(@Body() urlDto: UrlDto, @Req() req: Request, @Res() res: Response) {
     const { url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: UrlDto = urlDto;
-    const qrcode = await this.qrcodeService.urlQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.urlQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code url generated successfully',
@@ -41,7 +41,7 @@ export class QrcodeController {
   @Post('email')
   async emailQrcode(@Body() emailDto: EmailDto, @Req() req: Request, @Res() res: Response) {
     const { email, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: EmailDto = emailDto;
-    const qrcode = await this.qrcodeService.emailQrcode(email, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.emailQrcode(email, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code email generated successfully',
@@ -54,7 +54,7 @@ export class QrcodeController {
   @Post('whatsapp')
   async whatsappQrcode(@Body() whatsappDto: WhatsappDto, @Req() req: Request, @Res() res: Response) {
     const { whatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: WhatsappDto = whatsappDto;
-    const qrcode = await this.qrcodeService.whatsappQrcode(whatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.whatsappQrcode(whatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code whatsapp generated successfully',
@@ -67,7 +67,7 @@ export class QrcodeController {
   @Post('wifi')
   async wifiQrcode(@Body() wifiDto: WifiDto, @Req() req: Request, @Res() res: Response) {
     const { ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: WifiDto = wifiDto;
-    const qrcode = await this.qrcodeService.wifiQrcode(ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.wifiQrcode(ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code wifi generated successfully',
@@ -80,7 +80,7 @@ export class QrcodeController {
   @Post('social-media')
   async socialMediaQrcode(@Body() socialMediaDto: SocialMediaDto, @Req() req: Request, @Res() res: Response) {
     const { socialMedia, username, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: SocialMediaDto = socialMediaDto;  
-    const qrcode = await this.qrcodeService.socialMediaQrcode(socialMedia, username, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
+    const qrcode: string = await this.qrcodeService.socialMediaQrcode(socialMedia, username, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Qr code social media generated successfully',
