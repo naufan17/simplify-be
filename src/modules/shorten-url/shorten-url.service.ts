@@ -8,7 +8,7 @@ export class ShortenUrlService {
   constructor(private readonly urlRepository: UrlRepository) {}
 
   async shortenUrl(originalUrl: string) {
-    const urlId: string = randomBytes(5).toString('hex');
+    const urlId: string = randomBytes(8).toString('hex');
     const expiresAt: Date = new Date(Date.now() + 30 * 24 * 60 * 1000);
     const expiresAtTimestamp: number = Math.floor(expiresAt.getTime() / 1000);
     const urlStore: Url =  await this.urlRepository.createUrl(originalUrl, urlId, new Date(), expiresAt);

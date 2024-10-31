@@ -87,4 +87,34 @@ export class AuthService {
 
     return null;
   }
+  
+  async forgotPassword(email: string) {
+    const user: User | null = await this.userRepository.findByEmail(email);
+    if (!user) throw new NotFoundException('User does not exist');
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    // Save to DB
+
+    return otp;
+  }
+
+  async resetPassword(newPassword: string) {
+    const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+    if (!hashedPassword) throw new InternalServerErrorException();
+
+    // Cek in the DB
+    // Update DB
+
+    return true;
+  }
+
+  async verifyOtp(otp: number) {
+    // Verify OTP is valid
+
+    const resetToken: string = await this.tokenService.generateAccessToken({ sub: otp });
+    if (!resetToken) throw new InternalServerErrorException();
+
+    return resetToken
+  }
 }
