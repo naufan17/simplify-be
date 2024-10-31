@@ -7,7 +7,7 @@ import { Url } from './entitiy/url.entitiy';
 export class ShortenUrlService {
   constructor(private readonly urlRepository: UrlRepository) {}
 
-  async shortenUrl(originalUrl: string) {
+  async shortenUrl(originalUrl: string): Promise<{ urlId: string; expiresAtTimestamp: number }> {
     const urlId: string = randomBytes(5).toString('hex');
     const expiresAt: Date = new Date(Date.now() + 30 * 24 * 60 * 1000);
     const expiresAtTimestamp: number = Math.floor(expiresAt.getTime() / 1000);
@@ -17,7 +17,7 @@ export class ShortenUrlService {
     return { urlId, expiresAtTimestamp };
   }
 
-  async getOriginalUrl(urlId: string) {
+  async getOriginalUrl(urlId: string): Promise<string>{
     const urlData: Url | null = await this.urlRepository.findUrl(urlId);
     if (!urlData) throw new NotFoundException('URL not found');
     if (urlData.expiresAt < new Date()) throw new NotFoundException('URL expired');

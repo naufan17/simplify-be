@@ -12,14 +12,14 @@ export class UserService {
     private readonly sessionRepository: SessionRepository
   ) {}
 
-  async getProfile(userId: string) {
+  async getProfile(userId: string): Promise<User> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundException('User not found');
       
     return user;
   }
 
-  async getSession(userId: string) {
+  async getSession(userId: string): Promise<{ ipAddress: string; userAgent: string; loginAt: Date; lastActiveAt: Date; status: string }[]> {
     const session: Session[] = await this.sessionRepository.findById(userId);
     if (session.length === 0) throw new NotFoundException('User session not found');
       

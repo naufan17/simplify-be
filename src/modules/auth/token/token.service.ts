@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/types/jwt-payload';
 
 @Injectable()
 export class TokenService {
@@ -24,13 +25,13 @@ export class TokenService {
     });
   }
 
-  verifyAccessToken(accessToken: string): any {
+  verifyAccessToken(accessToken: string): JwtPayload {
     return this.jwtService.verify(accessToken, {
       secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
     });
   }
 
-  verifyRefreshToken(refreshToken: string): any {
+  verifyRefreshToken(refreshToken: string): JwtPayload {
     return this.jwtService.verify(refreshToken, {
       secret: this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
     });

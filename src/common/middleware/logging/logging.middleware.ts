@@ -8,7 +8,7 @@ export class LoggingMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     const start: number = Date.now();
-    const { method, originalUrl, ip, headers } = req;
+    const { method, originalUrl, ip, headers }: Request = req;
     const userAgent: string | undefined = headers['user-agent'] || 'unknown';
     const clientIp: string | string[] | undefined = headers['x-forwarded-for'] || ip;
 
@@ -16,9 +16,7 @@ export class LoggingMiddleware implements NestMiddleware {
       const { statusCode } = res;
       const responseTime: number = Date.now() - start;
 
-      this.logger.log(
-        `[${method}] ${originalUrl} | [${clientIp}] ${userAgent} | [${statusCode}] +${responseTime}ms`,
-      );
+      this.logger.log(`[${method}] ${originalUrl} | [${clientIp}] ${userAgent} | [${statusCode}] +${responseTime}ms`);
     });
 
     next();
