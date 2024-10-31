@@ -14,6 +14,7 @@ async function bootstrap() {
   app.use(compression());
   app.use(cookieParser());
   app.enableCors();
+  
   app.setGlobalPrefix('api', {
     exclude: [{
       path: '/:urlId',
