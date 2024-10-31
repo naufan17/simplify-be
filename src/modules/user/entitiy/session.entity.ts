@@ -26,5 +26,5 @@ export class Session {
   lastActiveAt!: Date;
 
   @Column({ type: 'timestamp' })  
-  expireAt!: Date
+  expiresAt!: Date
 }

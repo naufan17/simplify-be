@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Url } from 'src/modules/shorten-url/entitiy/url.entitiy';
 import { Session } from 'src/modules/user/entitiy/session.entity';
 import { User } from 'src/modules/user/entitiy/user.entity';
 
@@ -26,7 +27,7 @@ import { User } from 'src/modules/user/entitiy/user.entity';
           : false,  
         },
         timezone: configService.get<string>('DATABASE_TIMEZONE'),
-        entities: [User, Session],
+        entities: [User, Session, Url],
         migrations: ['../../../database/migrations/*.ts'],
       }),
     }),

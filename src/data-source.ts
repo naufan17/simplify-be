@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { User } from './modules/user/entitiy/user.entity';
 import { Session } from 'inspector';
+import { Url } from './modules/shorten-url/entitiy/url.entitiy';
  
 dotenv.config();
 
@@ -21,7 +22,7 @@ export const dataSource = new DataSource({
       : false,
   },
   timezone: configService.get<string>('DATABASE_TIMEZONE'),
-  entities: [User, Session],
+  entities: [User, Session, Url],
   migrations: ['../database/migrations/*.ts'],
 });
 

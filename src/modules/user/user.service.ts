@@ -24,8 +24,8 @@ export class UserService {
     if (session.length === 0) throw new NotFoundException('User session not found');
       
     return session.map(sessions => {
-      const isActive = new Date() < new Date(sessions.expireAt);
-      const { expireAt, ...sessionsData } = sessions;
+      const isActive = new Date() < new Date(sessions.expiresAt);
+      const { expiresAt, ...sessionsData } = sessions;
       return { ...sessionsData, status: isActive ? 'active' : 'expired' };
     });
   }

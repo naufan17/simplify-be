@@ -11,14 +11,17 @@ export class ShortenUrlController {
   @Post('/shorten-url')
   async shortenUrl(@Body() shortenUrlDto: ShortenUrlDto, @Req() req: Request, @Res() res: Response) {
     const { url }: ShortenUrlDto = shortenUrlDto;
-    const shortId: string = await this.shortenUrlService.shortenUrl(url);
-    const shortenUrl: string = `${req.protocol}://${req.get('host')}/${shortId}`;
+    const { urlId, expiresAtTimestamp }: { urlId: string; expiresAtTimestamp: number } = await this.shortenUrlService.shortenUrl(url);
+    const shortenUrl: string = `${req.protocol}://${req.get('host')}/${urlId}`;
 
     return res.status(HttpStatus.CREATED).json({
       message: 'Shorten url created successfully',
       success: 'Created',
       statusCode: HttpStatus.CREATED,
-      data: { url: shortenUrl },
+      data: { 
+        url: shortenUrl,
+        expiresAt: expiresAtTimestamp
+      },
     });
   }
 
