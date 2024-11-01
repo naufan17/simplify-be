@@ -3,6 +3,9 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { resetPasswordDto } from './dto/reset-password.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 // import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
 
 @Controller('auth')
@@ -72,6 +75,44 @@ export class AuthController {
       message: 'User logged out successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK
+    });
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Req() req: Request, @Res() res: Response) {
+    const { email }: ForgotPasswordDto = forgotPasswordDto;
+    const otp: number = await this.authService.forgotPassword(email);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'OTP sent successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
+      data: { otp }
+    });
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: Request,  @Res() res: Response) {
+    const { newPassword }: resetPasswordDto = resetPasswordDto;
+    await this.authService.resetPassword(newPassword);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Password reset successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK
+    });
+  }
+
+  @Post('verify-otp')
+  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto, @Req() req: Request, @Res() res: Response) {
+    const { otp }: VerifyOtpDto = verifyOtpDto;
+    const resetToken: string = await this.authService.verifyOtp(otp);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'OTP verified successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
+      data: { resetToken }
     });
   }
 }
