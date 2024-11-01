@@ -1,21 +1,34 @@
 import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
 import { User } from './modules/user/entitiy/user.entity';
-import { Session } from 'inspector';
 import { Url } from './modules/shorten-url/entitiy/url.entitiy';
- 
-const configService = new ConfigService();
+import { Session } from './modules/user/entitiy/session.entity';
+import dotenv from 'dotenv';
 
-export const dataSource = new DataSource({
-  type: configService.get<'postgres' | 'mysql' | 'mongodb'>('DATABASE') as 'postgres' | 'mysql' | 'mongodb',
-  url: configService.get<string>('DATABASE_URL'),
-  timezone: configService.get<string>('DATABASE_TIMEZONE'),
-  synchronize: configService.get<boolean>('DATABASE_SYNC'),
-  logging: configService.get<boolean>('DATABASE_LOG'),
-  cache: configService.get<boolean>('DATABASE_CACHE'),
+dotenv.config();
+
+interface DatabaseConfig {
+  NODE_ENV: 'production' | 'development' | 'testing';
+  DATABASE: 'postgres' | 'mysql' | 'mongodb';
+  DATABASE_URL: string;
+  DATABASE_TIMEZONE: string;
+  DATABASE_SYNC: boolean;
+  DATABASE_LOG: boolean;
+  DATABASE_CACHE: boolean;
+}
+
+const { NODE_ENV, DATABASE, DATABASE_URL, DATABASE_TIMEZONE, DATABASE_SYNC, DATABASE_LOG, DATABASE_CACHE } = process.env as unknown as DatabaseConfig;
+if (!NODE_ENV || !DATABASE || !DATABASE_URL || !DATABASE_TIMEZONE || !DATABASE_SYNC || !DATABASE_LOG || !DATABASE_CACHE) throw new Error('Missing database configuration')
+ 
+const dataSource = new DataSource({
+  type: DATABASE,
+  url: DATABASE_URL,
+  timezone: DATABASE_TIMEZONE,
+  synchronize: DATABASE_SYNC,
+  logging: DATABASE_LOG,
+  cache: DATABASE_CACHE,
   extra: {
     poolSize: 10,
-    ssl: configService.get<string>('NODE_ENV') === 'production'
+    ssl: NODE_ENV === 'production'
       ? { rejectUnauthorized: false }
       : false,
   },

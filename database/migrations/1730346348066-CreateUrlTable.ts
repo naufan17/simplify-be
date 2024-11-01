@@ -7,10 +7,10 @@ export class CreateUrlTable1730346348066 implements MigrationInterface {
             CREATE TABLE "url" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "url" character varying(255) NOT NULL,
-                "urlId" character varying(255) NOT NULL,
-                "expiresAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "createdAt" TIMESTAMP NOT NULL,
-                CONSTRAINT "UQ_1c6d9c4b7b5d4b6d9c4b7b5d4b6" UNIQUE ("urlId"),
+                "url_Id" character varying(255) NOT NULL,
+                "expires_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "created_at" TIMESTAMP NOT NULL,
+                CONSTRAINT "UQ_1c6d9c4b7b5d4b6d9c4b7b5d4b6" UNIQUE ("url_id"),
                 CONSTRAINT "PK_1c6d9c4b7b5d4b6d9c4b7b5d4b6 PRIMARY KEY ("id")
             )
         `)
