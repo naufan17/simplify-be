@@ -16,14 +16,14 @@ export class AuthService {
     private readonly tokenService: TokenService
   ) {}
 
-  async register(name: string, email: string, password: string): Promise<boolean> {
+  async register(name: string, email: string, phoneNumber: string, password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email)
     if (user) throw new ConflictException('User already exists');
 
     const hashedPassword: string = await bcrypt.hash(password, 10);
     if (!hashedPassword) throw new InternalServerErrorException();
 
-    const newUser: User = await this.userRepository.save(name, email, hashedPassword);
+    const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
     return true;

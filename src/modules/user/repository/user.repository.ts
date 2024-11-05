@@ -11,14 +11,14 @@ export class UserRepository {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { email }, select: [ 'id', 'name', 'email', 'password' ] });
+    return await this.userRepository.findOne({ where: { email }, select: [ 'id', 'name', 'email', 'phoneNumber' , 'password' ] });
   }
 
   async findById(userId: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id: userId }, select: ['name', 'email' ] });
+    return await this.userRepository.findOne({ where: { id: userId }, select: ['name', 'phoneNumber', 'email' ] });
   }
 
-  async save(name: string, email: string, hashedPassword: string): Promise<User> {
-    return await this.userRepository.save({ name, email, password: hashedPassword });
+  async save(name: string, email: string, phoneNumber: string, hashedPassword: string): Promise<User> {
+    return await this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
   }
 }
