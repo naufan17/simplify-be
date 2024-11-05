@@ -7,11 +7,14 @@ import { User } from '../user/entitiy/user.entity';
 import { TokenService } from './token/token.service';
 import { SessionRepository } from '../user/repository/session.repository';
 import { Session } from '../user/entitiy/session.entity';
+import { UserOtpRepository } from './repository/user-otp.repository';
+import { UserOtp } from './schema/user-otp.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly userOtpRepository: UserOtpRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly tokenService: TokenService
   ) {}
@@ -93,28 +96,33 @@ export class AuthService {
     if (!user) throw new NotFoundException('User does not exist');
 
     const otp = Math.floor(100000 + Math.random() * 900000);
-
-    // Save to DB
+    const userOtp: UserOtp = await this.userOtpRepository.save(user.id, user.email, otp, new Date());
+    if (!userOtp) throw new InternalServerErrorException();
 
     return otp;
   }
 
-  async resetPassword(newPassword: string) {
-    const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+  async resetPassword(userId: string, Password: string) {
+    const user: User | null = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const hashedPassword: string = await bcrypt.hash(Password, 10);
     if (!hashedPassword) throw new InternalServerErrorException();
 
-    // Cek in the DB
-    // Update DB
+    const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);
+    if (!userUpdate) throw new InternalServerErrorException();
 
     return true;
   }
 
   async verifyOtp(otp: number) {
-    // Verify OTP is valid
+    console.log(otp)
+    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
+    if (!userOtp) throw new NotFoundException('Invalid OTP');
 
-    const resetToken: string = await this.tokenService.generateAccessToken({ sub: otp });
-    if (!resetToken) throw new InternalServerErrorException();
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: userOtp.userId });
+    if (!accessToken) throw new InternalServerErrorException();
 
-    return resetToken
+    return accessToken
   }
 }

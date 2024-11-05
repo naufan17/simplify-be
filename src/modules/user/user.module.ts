@@ -17,7 +17,12 @@ import { Session } from './entitiy/session.entity';
     JwtModule,
   ],
   controllers: [UserController],
-  providers: [UserService, JwtStrategy, UserRepository, SessionRepository],
+  providers: [
+    UserService, 
+    JwtStrategy, 
+    UserRepository, 
+    SessionRepository
+  ],
 })
 
 export class UserModule {}

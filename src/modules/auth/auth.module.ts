@@ -10,15 +10,28 @@ import { Session } from '../user/entitiy/session.entity';
 import { LocalStrategy } from '../../common/strategy/passport/local.strategy';
 import { SessionRepository } from '../user/repository/session.repository';
 import { UserRepository } from '../user/repository/user.repository';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserOtp, UserOtpSchema } from './schema/user-otp.schema';
+import { UserOtpRepository } from './repository/user-otp.repository';
+import { JwtStrategy } from 'src/common/strategy/passport/jwt.strategy';
 
 @Module({
   imports: [
     PassportModule,
     TypeOrmModule.forFeature([User, Session]),
+    MongooseModule.forFeature([{ name: UserOtp.name, schema: UserOtpSchema }]),
     JwtModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, TokenService, LocalStrategy, SessionRepository, UserRepository],
+  providers: [
+    AuthService, 
+    TokenService, 
+    LocalStrategy,
+    JwtStrategy, 
+    SessionRepository, 
+    UserRepository, 
+    UserOtpRepository
+  ],
 })
 
 export class AuthModule {}

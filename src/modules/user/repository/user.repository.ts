@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "../entitiy/user.entity";
@@ -20,5 +21,9 @@ export class UserRepository {
 
   async save(name: string, email: string, phoneNumber: string, hashedPassword: string): Promise<User> {
     return await this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
+  }
+
+  async updatePassword(id: string, hashedPassword: string): Promise<any> {
+    return await this.userRepository.update({ id }, { password: hashedPassword });
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,6 +7,8 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { resetPasswordDto } from './dto/reset-password.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 // import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
+import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
+import { AuthenticatedRequest } from 'src/types/authenticated-request';
 
 @Controller('auth')
 export class AuthController {
@@ -91,10 +93,12 @@ export class AuthController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('reset-password')
-  async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: Request,  @Res() res: Response) {
-    const { newPassword }: resetPasswordDto = resetPasswordDto;
-    await this.authService.resetPassword(newPassword);
+  async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
+    const userId: string = req.user.sub;
+    const { password }: resetPasswordDto = resetPasswordDto;
+    await this.authService.resetPassword(userId, password);
 
     return res.status(HttpStatus.OK).json({
       message: 'Password reset successfully',
@@ -106,13 +110,13 @@ export class AuthController {
   @Post('verify-otp')
   async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto, @Req() req: Request, @Res() res: Response) {
     const { otp }: VerifyOtpDto = verifyOtpDto;
-    const resetToken: string = await this.authService.verifyOtp(otp);
+    const accessToken: string = await this.authService.verifyOtp(otp);
 
     return res.status(HttpStatus.OK).json({
       message: 'OTP verified successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { resetToken }
+      data: { accessToken }
     });
   }
 }
