@@ -83,13 +83,12 @@ export class AuthController {
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Req() req: Request, @Res() res: Response) {
     const { email }: ForgotPasswordDto = forgotPasswordDto;
-    const otp: number = await this.authService.forgotPassword(email);
+    await this.authService.forgotPassword(email);
 
     return res.status(HttpStatus.OK).json({
-      message: 'OTP sent successfully',
+      message: 'OTP sent to your email',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { otp }
     });
   }
 

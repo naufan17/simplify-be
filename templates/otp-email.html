@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your OTP Code</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1 {
+      color: #333333;
+    }
+    p {
+      color: #555555;
+      font-size: 16px;
+    }
+    .otp {
+      font-size: 24px;
+      font-weight: bold;
+      color: #FF5722;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      letter-spacing: 4px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #aaaaaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your OTP Code</h1>
+    <p>Hello,</p>
+    <p>We received a request to verify your identity. Please use the following One-Time Password (OTP) to complete your verification process. This code will expire in 5 minutes.</p>
+    <div class="otp">{{ otp }}</div>
+    <p>If you didn’t request this, please ignore this email.</p>
+    <div class="footer">
+      <p>Thank you for using our service!</p>
+      <p>© 2024 Simplify</p>
+    </div>
+  </div>
+</body>
+</html>
