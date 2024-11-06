@@ -14,7 +14,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserOtp, UserOtpSchema } from './schema/user-otp.schema';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { JwtStrategy } from 'src/common/strategy/passport/jwt.strategy';
-import { MailerService } from './mailer/mailer.service';
 
 @Module({
   imports: [
@@ -27,12 +26,11 @@ import { MailerService } from './mailer/mailer.service';
   providers: [
     AuthService, 
     TokenService, 
-    MailerService,
     LocalStrategy,
     JwtStrategy, 
     SessionRepository, 
     UserRepository, 
-    UserOtpRepository, MailerService
+    UserOtpRepository
   ],
 })
 

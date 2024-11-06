@@ -9,7 +9,6 @@ import { SessionRepository } from '../user/repository/session.repository';
 import { Session } from '../user/entitiy/session.entity';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { UserOtp } from './schema/user-otp.schema';
-import { MailerService } from './mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +16,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly userOtpRepository: UserOtpRepository,
     private readonly sessionRepository: SessionRepository,
-    private readonly tokenService: TokenService,
-    private readonly mailerService: MailerService
+    private readonly tokenService: TokenService
   ) {}
 
   async register(name: string, email: string, phoneNumber: string, password: string): Promise<boolean> {
@@ -77,6 +75,21 @@ export class AuthService {
 
     return true;
   }
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user: User | null = await this.userRepository.findByEmail(email);
+    if (!user) throw new NotFoundException('User does not exist');
+
+    const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
+    if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
+
+    if (user && isPasswordValid === true) {
+      const { password, ...result } = user;
+      return result;
+    }
+
+    return null;
+  }
   
   async forgotPassword(email: string) {
     const user: User | null = await this.userRepository.findByEmail(email);
@@ -85,8 +98,6 @@ export class AuthService {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const userOtp: UserOtp = await this.userOtpRepository.save(user.id, user.email, otp, new Date());
     if (!userOtp) throw new InternalServerErrorException();
-
-    await this.mailerService.sendEmail(user.email, 'OTP', otp.toString());
 
     return otp;
   }
@@ -105,6 +116,7 @@ export class AuthService {
   }
 
   async verifyOtp(otp: number) {
+    console.log(otp)
     const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
     if (!userOtp) throw new NotFoundException('Invalid OTP');
 
@@ -112,20 +124,5 @@ export class AuthService {
     if (!accessToken) throw new InternalServerErrorException();
 
     return accessToken
-  }
-
-  async validateUser(email: string, password: string): Promise<any> {
-    const user: User | null = await this.userRepository.findByEmail(email);
-    if (!user) throw new NotFoundException('User does not exist');
-
-    const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
-    if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
-
-    if (user && isPasswordValid === true) {
-      const { password, ...result } = user;
-      return result;
-    }
-
-    return null;
   }
 }
