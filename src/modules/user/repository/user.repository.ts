@@ -12,11 +12,17 @@ export class UserRepository {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { email }, select: [ 'id', 'name', 'email', 'phoneNumber' , 'password' ] });
+    return await this.userRepository.findOne({ 
+      where: { email }, 
+      select: [ 'id', 'name', 'email', 'phoneNumber', 'isVerified', 'password' ] 
+    });
   }
 
   async findById(userId: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id: userId }, select: ['name', 'phoneNumber', 'email' ] });
+    return await this.userRepository.findOne({ 
+      where: { id: userId }, 
+      select: ['name', 'phoneNumber', 'email' ] 
+    });
   }
 
   async save(name: string, email: string, phoneNumber: string, hashedPassword: string): Promise<User> {
@@ -25,5 +31,9 @@ export class UserRepository {
 
   async updatePassword(id: string, hashedPassword: string): Promise<any> {
     return await this.userRepository.update({ id }, { password: hashedPassword });
+  }
+
+  async updateIsVerified(id: string, isVerified: boolean): Promise<any> {
+    return await this.userRepository.update({ id }, { isVerified });
   }
 }

@@ -5,7 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { resetPasswordDto } from './dto/reset-password.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { OtpDto } from './dto/otp.dto';
 // import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
@@ -20,7 +20,7 @@ export class AuthController {
     await this.authService.register(name, email, phoneNumber, password);
 
     return res.status(HttpStatus.CREATED).json({
-      message: 'User created successfully',
+      message: ['User created successfully', 'Verify your email to login', 'OTP sent to your email'],
       success: 'Created',
       statusCode: HttpStatus.CREATED,
     });  
@@ -107,8 +107,8 @@ export class AuthController {
   }
 
   @Post('verify-otp')
-  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto, @Req() req: Request, @Res() res: Response) {
-    const { otp }: VerifyOtpDto = verifyOtpDto;
+  async verifyOtp(@Body() otpDto: OtpDto, @Req() req: Request, @Res() res: Response) {
+    const { otp }: OtpDto = otpDto;
     const accessToken: string = await this.authService.verifyOtp(otp);
 
     return res.status(HttpStatus.OK).json({
@@ -116,6 +116,18 @@ export class AuthController {
       success: 'Ok',
       statusCode: HttpStatus.OK,
       data: { accessToken }
+    });
+  }
+
+  @Post('verify-email')
+  async verifyEmail(@Body() otpDto: OtpDto, @Req() req: Request, @Res() res: Response) {
+    const { otp }: OtpDto = otpDto;
+    await this.authService.verifyEmail(otp);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Email verified successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
     });
   }
 }

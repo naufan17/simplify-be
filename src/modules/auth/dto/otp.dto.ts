@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, Max, Min } from "class-validator";
 
-export class VerifyOtpDto {
+export class OtpDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(100000)

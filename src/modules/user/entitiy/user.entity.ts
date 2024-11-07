@@ -16,6 +16,9 @@ export class User {
   @Column({ unique: true})
   phoneNumber!: string;
 
+  @Column({ default: false })
+  isVerified!: boolean
+
   @Column({ type: 'text' })
   password!: string;
 

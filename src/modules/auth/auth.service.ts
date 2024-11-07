@@ -31,12 +31,27 @@ export class AuthService {
     const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
+    const otp: number = Math.floor(100000 + Math.random() * 900000);
+    const userOtp: UserOtp = await this.userOtpRepository.save(newUser.id, newUser.email, otp, new Date());
+    if (!userOtp) throw new InternalServerErrorException();
+
+    await this.mailerService.sendEmail(newUser.email, 'Verify Email', otp.toString());
+
     return true;
   }
 
   async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, refreshToken: string }> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
+    if (user.isVerified === false) {
+      const otp: number = Math.floor(100000 + Math.random() * 900000);
+      const userOtp: UserOtp = await this.userOtpRepository.save(user.id, user.email, otp, new Date());
+      if (!userOtp) throw new InternalServerErrorException();
+  
+      await this.mailerService.sendEmail(user.email, 'Verify Email', otp.toString());
+  
+      throw new UnauthorizedException('User is not verified, check your email to verify');
+    }
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
@@ -111,7 +126,17 @@ export class AuthService {
     const accessToken: string = this.tokenService.generateAccessToken({ sub: userOtp.userId });
     if (!accessToken) throw new InternalServerErrorException();
 
-    return accessToken
+    return accessToken;
+  }
+
+  async verifyEmail(otp: number) {
+    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
+    if (!userOtp) throw new NotFoundException('Invalid OTP');
+
+    const isVerified = await this.userRepository.updateIsVerified(userOtp.userId, true);
+    if (!isVerified) throw new InternalServerErrorException();
+
+    return true;
   }
 
   async validateUser(email: string, password: string): Promise<any> {
