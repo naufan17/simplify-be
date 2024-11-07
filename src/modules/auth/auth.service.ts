@@ -62,7 +62,7 @@ export class AuthService {
 
   async verifyEmail(otp: number): Promise<boolean> {
     const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
-    if (!userOtp) throw new NotFoundException('Invalid OTP');
+    if (!userOtp) throw new UnauthorizedException('Invalid OTP');
 
     const isVerified = await this.userRepository.updateIsVerified(userOtp.userId, true);
     if (!isVerified) throw new InternalServerErrorException();
@@ -106,6 +106,16 @@ export class AuthService {
     return true;
   }
 
+  async verifyOtp(otp: number): Promise<string> {
+    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
+    if (!userOtp) throw new UnauthorizedException('Invalid OTP');
+
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: userOtp.userId });
+    if (!accessToken) throw new InternalServerErrorException();
+
+    return accessToken;
+  }
+
   async resetPassword(userId: string, Password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -117,16 +127,6 @@ export class AuthService {
     if (!userUpdate) throw new InternalServerErrorException();
 
     return true;
-  }
-
-  async verifyOtp(otp: number): Promise<string> {
-    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
-    if (!userOtp) throw new NotFoundException('Invalid OTP');
-
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: userOtp.userId });
-    if (!accessToken) throw new InternalServerErrorException();
-
-    return accessToken;
   }
 
   async sendEmailOtp(userId: string, email: string, subject: string): Promise<boolean> {

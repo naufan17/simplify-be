@@ -20,12 +20,12 @@ export class UserService {
   }
 
   async getSession(userId: string): Promise<{ ipAddress: string; userAgent: string; loginAt: Date; lastActiveAt: Date; status: string }[]> {
-    const session: Session[] = await this.sessionRepository.findById(userId);
-    if (session.length === 0) throw new NotFoundException('User session not found');
+    const sessions: Session[] = await this.sessionRepository.findById(userId);
+    if (sessions.length === 0) throw new NotFoundException('User session not found');
       
-    return session.map(sessions => {
-      const isActive = new Date() < new Date(sessions.expiresAt);
-      const { expiresAt, ...sessionsData } = sessions;
+    return sessions.map(session => {
+      const isActive = new Date() < new Date(session.expiresAt);
+      const { expiresAt, ...sessionsData } = session;
       return { ...sessionsData, status: isActive ? 'active' : 'expired' };
     });
   }
