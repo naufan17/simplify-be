@@ -23,6 +23,10 @@ export class SessionRepository {
     return await this.sessionRepository.update({ refreshToken }, { expiresAt });
   }
 
+  async endAllSessions(userId: string): Promise<any> {
+    return await this.sessionRepository.update({ user: { id: userId } }, { expiresAt: new Date() });
+  }
+
   async findById(userId: string): Promise<Session[]> {
     return await this.sessionRepository.find({ 
       where: { user: { id: userId } }, 

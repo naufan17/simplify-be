@@ -39,14 +39,16 @@ export class AuthService {
   async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, refreshToken: string }> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
-    if (user.isVerified === false) {
-      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
-  
-      throw new UnauthorizedException('User is not verified, check your email to verify');
-    }
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
+
+    if (user.isVerified === false) {
+      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
+      throw new UnauthorizedException('User is not verified, check your email to verify');
+    }
+
+    await this.sessionRepository.endAllSessions(user.id);
 
     const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
     const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
@@ -62,7 +64,7 @@ export class AuthService {
     const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
     if (!userOtp) throw new NotFoundException('Invalid OTP');
 
-    const isVerified: any = await this.userRepository.updateIsVerified(userOtp.userId, true);
+    const isVerified = await this.userRepository.updateIsVerified(userOtp.userId, true);
     if (!isVerified) throw new InternalServerErrorException();
 
     return true;
