@@ -31,11 +31,7 @@ export class AuthService {
     const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
-    const otp: number = Math.floor(100000 + Math.random() * 900000);
-    const userOtp: UserOtp = await this.userOtpRepository.save(newUser.id, newUser.email, otp, new Date());
-    if (!userOtp) throw new InternalServerErrorException();
-
-    await this.mailerService.sendEmail(newUser.email, 'Verify Email', otp.toString());
+    await this.sendEmailOtp(newUser.id, newUser.email, 'Verify Email');
 
     return true;
   }
@@ -44,11 +40,7 @@ export class AuthService {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
     if (user.isVerified === false) {
-      const otp: number = Math.floor(100000 + Math.random() * 900000);
-      const userOtp: UserOtp = await this.userOtpRepository.save(user.id, user.email, otp, new Date());
-      if (!userOtp) throw new InternalServerErrorException();
-  
-      await this.mailerService.sendEmail(user.email, 'Verify Email', otp.toString());
+      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
   
       throw new UnauthorizedException('User is not verified, check your email to verify');
     }
@@ -66,8 +58,18 @@ export class AuthService {
     return { accessToken, refreshToken }
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string }> {
-    const refreshTokenPayload: any = await this.tokenService.verifyRefreshToken(refreshToken);
+  async verifyEmail(otp: number): Promise<boolean> {
+    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
+    if (!userOtp) throw new NotFoundException('Invalid OTP');
+
+    const isVerified: any = await this.userRepository.updateIsVerified(userOtp.userId, true);
+    if (!isVerified) throw new InternalServerErrorException();
+
+    return true;
+  }
+
+  async refreshAccessToken(refreshToken: string): Promise<string> { 
+    const refreshTokenPayload: any = this.tokenService.verifyRefreshToken(refreshToken);
     if (!refreshTokenPayload) throw new UnauthorizedException('Invalid refresh token');
 
     const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
@@ -80,7 +82,7 @@ export class AuthService {
     const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshTokenPayload.sub });
     if (!accessToken) throw new InternalServerErrorException();
 
-    return { accessToken };
+    return accessToken;
   }
 
   async logout(refreshToken: string): Promise<boolean> {
@@ -93,20 +95,16 @@ export class AuthService {
     return true;
   }
   
-  async forgotPassword(email: string) {
+  async forgotPassword(email: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
 
-    const otp: number = Math.floor(100000 + Math.random() * 900000);
-    const userOtp: UserOtp = await this.userOtpRepository.save(user.id, user.email, otp, new Date());
-    if (!userOtp) throw new InternalServerErrorException();
-
-    await this.mailerService.sendEmail(user.email, 'Forgot Password', otp.toString());
+    await this.sendEmailOtp(user.id, user.email, 'Reset Password');
 
     return true;
   }
 
-  async resetPassword(userId: string, Password: string) {
+  async resetPassword(userId: string, Password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundException('User not found');
 
@@ -119,7 +117,7 @@ export class AuthService {
     return true;
   }
 
-  async verifyOtp(otp: number) {
+  async verifyOtp(otp: number): Promise<string> {
     const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
     if (!userOtp) throw new NotFoundException('Invalid OTP');
 
@@ -129,12 +127,12 @@ export class AuthService {
     return accessToken;
   }
 
-  async verifyEmail(otp: number) {
-    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
-    if (!userOtp) throw new NotFoundException('Invalid OTP');
+  async sendEmailOtp(userId: string, email: string, subject: string): Promise<boolean> {
+    const otp: number = Math.floor(100000 + Math.random() * 900000);
+    const userOtp: UserOtp = await this.userOtpRepository.save(userId, email, otp, new Date());
+    if (!userOtp) throw new InternalServerErrorException();
 
-    const isVerified = await this.userRepository.updateIsVerified(userOtp.userId, true);
-    if (!isVerified) throw new InternalServerErrorException();
+    await this.mailerService.sendEmail(email, subject, otp.toString());
 
     return true;
   }

@@ -27,7 +27,7 @@ export class ShortenUrlController {
 
   @Version(VERSION_NEUTRAL)
   @Get('/:urlId')
-  async redirectToOriginalUrl(@Param() redirectUrlDto: RedirectUrlDto , @Req() req: Request, @Res() res: Response) {
+  async redirectToOriginalUrl(@Param() redirectUrlDto: RedirectUrlDto, @Res() res: Response) {
     const { urlId }: RedirectUrlDto = redirectUrlDto;
     const originalUrl: string = await this.shortenUrlService.getOriginalUrl(urlId);
     

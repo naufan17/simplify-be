@@ -22,7 +22,7 @@ export class MailerService {
     }); 
   }
 
-  async sendEmail(to: string, subject: string, otp: string) {
+  async sendEmail(to: string, subject: string, otp: string): Promise<void> {
     try {
       const htmlTemplatePath = path.join('templates', 'otp-email.html');
       let htmlContent = fs.readFileSync(htmlTemplatePath, 'utf8');
@@ -31,7 +31,7 @@ export class MailerService {
       await this.transporter.sendMail({
         from: '"Simplify" <simplify@demomailtrap.com>',
         to,
-        subject: 'Your OTP Code',
+        subject,
         html: htmlContent
       });
 

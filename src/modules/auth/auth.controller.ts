@@ -50,12 +50,24 @@ export class AuthController {
     // console.log(req.user);
   }
 
+  @Post('verify-email')
+  async verifyEmail(@Body() otpDto: OtpDto, @Res() res: Response) {
+    const { otp }: OtpDto = otpDto;
+    await this.authService.verifyEmail(otp);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Email verified successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
+    });
+  }
+
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const refreshToken: string | null = req.cookies['refreshToken'];
     if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
-    const { accessToken }: { accessToken: string } = await this.authService.refreshAccessToken(refreshToken);
+    const accessToken: string = await this.authService.refreshAccessToken(refreshToken);
 
     return res.status(HttpStatus.OK).json({ 
       message: 'Access token refreshed successfully',
@@ -81,7 +93,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Req() req: Request, @Res() res: Response) {
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Res() res: Response) {
     const { email }: ForgotPasswordDto = forgotPasswordDto;
     await this.authService.forgotPassword(email);
 
@@ -107,7 +119,7 @@ export class AuthController {
   }
 
   @Post('verify-otp')
-  async verifyOtp(@Body() otpDto: OtpDto, @Req() req: Request, @Res() res: Response) {
+  async verifyOtp(@Body() otpDto: OtpDto, @Res() res: Response) {
     const { otp }: OtpDto = otpDto;
     const accessToken: string = await this.authService.verifyOtp(otp);
 
@@ -116,18 +128,6 @@ export class AuthController {
       success: 'Ok',
       statusCode: HttpStatus.OK,
       data: { accessToken }
-    });
-  }
-
-  @Post('verify-email')
-  async verifyEmail(@Body() otpDto: OtpDto, @Req() req: Request, @Res() res: Response) {
-    const { otp }: OtpDto = otpDto;
-    await this.authService.verifyEmail(otp);
-
-    return res.status(HttpStatus.OK).json({
-      message: 'Email verified successfully',
-      success: 'Ok',
-      statusCode: HttpStatus.OK,
     });
   }
 }

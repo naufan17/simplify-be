@@ -1,6 +1,6 @@
-import { Controller, Post, HttpStatus, Req, Res, Body } from '@nestjs/common';
+import { Controller, Post, HttpStatus, Res, Body } from '@nestjs/common';
 import { QrcodeService } from './qrcode.service';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { TextDto } from './dto/text.dto';
 import { UrlDto } from './dto/url.dto';
 import { EmailDto } from './dto/email.dto';
@@ -13,7 +13,7 @@ export class QrcodeController {
   constructor(private readonly qrcodeService: QrcodeService) {}
 
   @Post('text')
-  async textQrcode(@Body() textDto: TextDto, @Req() req: Request, @Res() res: Response) {
+  async textQrcode(@Body() textDto: TextDto, @Res() res: Response) {
     const { text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: TextDto = textDto;
     const qrcode: string = await this.qrcodeService.textQrcode(text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
@@ -26,7 +26,7 @@ export class QrcodeController {
   }
 
   @Post('url')
-  async urlQrcode(@Body() urlDto: UrlDto, @Req() req: Request, @Res() res: Response) {
+  async urlQrcode(@Body() urlDto: UrlDto, @Res() res: Response) {
     const { url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: UrlDto = urlDto;
     const qrcode: string = await this.qrcodeService.urlQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
@@ -39,7 +39,7 @@ export class QrcodeController {
   }
 
   @Post('email')
-  async emailQrcode(@Body() emailDto: EmailDto, @Req() req: Request, @Res() res: Response) {
+  async emailQrcode(@Body() emailDto: EmailDto, @Res() res: Response) {
     const { email, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: EmailDto = emailDto;
     const qrcode: string = await this.qrcodeService.emailQrcode(email, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
@@ -52,7 +52,7 @@ export class QrcodeController {
   }
 
   @Post('whatsapp')
-  async whatsappQrcode(@Body() whatsappDto: WhatsappDto, @Req() req: Request, @Res() res: Response) {
+  async whatsappQrcode(@Body() whatsappDto: WhatsappDto, @Res() res: Response) {
     const { whatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: WhatsappDto = whatsappDto;
     const qrcode: string = await this.qrcodeService.whatsappQrcode(whatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
@@ -65,7 +65,7 @@ export class QrcodeController {
   }
 
   @Post('wifi')
-  async wifiQrcode(@Body() wifiDto: WifiDto, @Req() req: Request, @Res() res: Response) {
+  async wifiQrcode(@Body() wifiDto: WifiDto, @Res() res: Response) {
     const { ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: WifiDto = wifiDto;
     const qrcode: string = await this.qrcodeService.wifiQrcode(ssid, password, encryption, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
@@ -78,7 +78,7 @@ export class QrcodeController {
   }
 
   @Post('social-media')
-  async socialMediaQrcode(@Body() socialMediaDto: SocialMediaDto, @Req() req: Request, @Res() res: Response) {
+  async socialMediaQrcode(@Body() socialMediaDto: SocialMediaDto, @Res() res: Response) {
     const { socialMedia, username, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType }: SocialMediaDto = socialMediaDto;  
     const qrcode: string = await this.qrcodeService.socialMediaQrcode(socialMedia, username, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
 
