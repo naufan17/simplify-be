@@ -37,8 +37,10 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, { 
       httpOnly: true,
       secure: true,
+      signed: true,
       sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     return res.status(HttpStatus.OK).json({
@@ -47,7 +49,6 @@ export class AuthController {
       statusCode: HttpStatus.OK,
       data: { accessToken },
     });
-    // console.log(req.user);
   }
 
   @Post('verify-email')
@@ -64,7 +65,7 @@ export class AuthController {
 
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
-    const refreshToken: string | null = req.cookies['refreshToken'];
+    const refreshToken: string | null = req.signedCookies['refreshToken'];
     if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
     const accessToken: string = await this.authService.refreshAccessToken(refreshToken);
@@ -79,7 +80,7 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const refreshToken: string | null = req.cookies['refreshToken'];
+    const refreshToken: string | null = req.signedCookies['refreshToken'];
     if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
     await this.authService.logout(refreshToken);

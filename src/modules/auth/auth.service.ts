@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../user/repository/user.repository';
@@ -116,11 +115,11 @@ export class AuthService {
     return accessToken;
   }
 
-  async resetPassword(userId: string, Password: string): Promise<boolean> {
+  async resetPassword(userId: string, password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const hashedPassword: string = await bcrypt.hash(Password, 10);
+    const hashedPassword: string = await bcrypt.hash(password, 10);
     if (!hashedPassword) throw new InternalServerErrorException();
 
     const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);
@@ -139,17 +138,19 @@ export class AuthService {
     return true;
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<User | null> {
     const user: User | null = await this.userRepository.findByEmail(email);
-    if (!user) throw new NotFoundException('User does not exist');
+    if (!user) throw new NotFoundException('User not found');
 
     const isPasswordValid: boolean = await bcrypt.compare(password, user.password);
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
 
-    if (user && isPasswordValid === true) {
-      const { password, ...result } = user;
-      return result;
+    if (user.isVerified === false) {
+      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
+      throw new UnauthorizedException('User is not verified, check your email to verify');
     }
+
+    if (user && isPasswordValid === true && user.isVerified === true) return user
 
     return null;
   }

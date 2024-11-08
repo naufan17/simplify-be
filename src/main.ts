@@ -12,8 +12,17 @@ async function bootstrap() {
 
   app.use(helmet());
   app.use(compression());
-  app.use(cookieParser());
-  app.enableCors();
+  app.use(cookieParser(process.env.COOKIE_SECRET));  
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Cookie'],
+    preflightContinue: true,
+    optionsSuccessStatus: 204,
+    maxAge: 3600,
+  });
   
   app.setGlobalPrefix('api', {
     exclude: [{

@@ -13,7 +13,7 @@ export class LoggingMiddleware implements NestMiddleware {
     const clientIp: string | string[] | undefined = headers['x-forwarded-for'] || ip;
 
     res.on('finish', () => {
-      const { statusCode } = res;
+      const { statusCode }: Response = res;
       const responseTime: number = Date.now() - start;
 
       this.logger.log(`[${method}] ${originalUrl} | [${clientIp}] ${userAgent} | [${statusCode}] +${responseTime}ms`);
