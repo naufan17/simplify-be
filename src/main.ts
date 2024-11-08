@@ -4,11 +4,14 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { INestApplication, RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
+import moment from 'moment-timezone';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   const port: number = Number(process.env.PORT) || 8000;
   const hostname: string = process.env.HOSTNAME || 'localhost';
+
+  moment.tz.setDefault('Asia/Jakarta');
 
   app.use(helmet());
   app.use(compression());

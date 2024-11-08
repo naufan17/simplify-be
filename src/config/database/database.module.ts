@@ -17,12 +17,12 @@ import { User } from 'src/modules/user/entitiy/user.entity';
       useFactory: (configService: ConfigService) => ({
         type: configService.get< 'postgres' | 'mysql' | 'mongodb' >('DATABASE'),
         url: configService.get<string>('DATABASE_URL'),
-        timezone: configService.get<string>('DATABASE_TIMEZONE'),
         synchronize: configService.get<boolean>('DATABASE_SYNC'),
         logging: configService.get<boolean>('DATABASE_LOG'),
         cache: configService.get<boolean>('DATABASE_CACHE'),
         extra: {
-          poolSize: 10,
+          poolSize: configService.get<number>('DATABASE_POOL_SIZE'),
+          timezone: configService.get<string>('DATABASE_TIMEZONE'),
           ssl: configService.get<string>('NODE_ENV') === "production" 
           ? { rejectUnauthorized: false } 
           : false,  

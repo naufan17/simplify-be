@@ -38,6 +38,7 @@
     "express": "^4.21.1",
     "helmet": "^8.0.0",
     "jsdom": "^25.0.1",
+    "moment-timezone": "^0.5.46",
     "mongoose": "^8.8.0",
     "morgan": "^1.10.0",
     "nest-winston": "^1.9.7",
