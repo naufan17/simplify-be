@@ -21,7 +21,7 @@ export class QrcodeService {
   }
 
   async emailQrcode(email: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
-    const formattedEmail = `mailto:${email}`;
+    const formattedEmail: string = `mailto:${email}`;
     const qrcode: string = await this.generateQrcode(formattedEmail, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
@@ -29,7 +29,7 @@ export class QrcodeService {
   }
 
   async whatsappQrcode(whatsapp: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
-    const formattedWhatsapp = 'https://wa.me/62' + whatsapp.substring(1);
+    const formattedWhatsapp: string = 'https://wa.me/62' + whatsapp.substring(1);
     const qrcode: string = await this.generateQrcode(formattedWhatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
@@ -37,7 +37,7 @@ export class QrcodeService {
   }
 
   async wifiQrcode(ssid: string, password: string | undefined, encryption: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
-    const formattedWifi = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
+    const formattedWifi: string = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
     const qrcode: string = await this.generateQrcode(formattedWifi, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 

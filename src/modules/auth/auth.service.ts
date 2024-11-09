@@ -47,13 +47,14 @@ export class AuthService {
       throw new UnauthorizedException('User is not verified, check your email to verify');
     }
 
-    await this.sessionRepository.endAllSessions(user.id);
+    const sessionEnd: any = await this.sessionRepository.endAllSessions(user.id);
+    if (!sessionEnd) throw new InternalServerErrorException();
 
     const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
     const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
     if (!accessToken || !refreshToken) throw new InternalServerErrorException();
 
-    const session: Session = await this.sessionRepository.createSession(user.id, refreshToken, ipAddress, userAgent, new Date(), new Date(), new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
+    const session: Session = await this.sessionRepository.createSession(user.id, refreshToken, ipAddress, userAgent, new Date(), new Date(), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
     if (!session) throw new InternalServerErrorException();
 
     return { accessToken, refreshToken }

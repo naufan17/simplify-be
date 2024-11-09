@@ -19,7 +19,7 @@ interface DatabaseConfig {
 const { NODE_ENV, DATABASE, DATABASE_URL, DATABASE_TIMEZONE, DATABASE_SYNC, DATABASE_LOG, DATABASE_CACHE } = process.env as unknown as DatabaseConfig;
 if (!NODE_ENV || !DATABASE || !DATABASE_URL || !DATABASE_TIMEZONE || !DATABASE_SYNC || !DATABASE_LOG || !DATABASE_CACHE) throw new Error('Missing database configuration')
  
-const dataSource = new DataSource({
+const dataSource: DataSource = new DataSource({
   type: DATABASE,
   url: DATABASE_URL,
   timezone: DATABASE_TIMEZONE,

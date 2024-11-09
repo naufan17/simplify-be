@@ -105,6 +105,19 @@ export class AuthController {
     });
   }
 
+  @Post('verify-otp')
+  async verifyOtp(@Body() otpDto: OtpDto, @Res() res: Response) {
+    const { otp }: OtpDto = otpDto;
+    const accessToken: string = await this.authService.verifyOtp(otp);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'OTP verified successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
+      data: { accessToken }
+    });
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
@@ -116,19 +129,6 @@ export class AuthController {
       message: 'Password reset successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK
-    });
-  }
-
-  @Post('verify-otp')
-  async verifyOtp(@Body() otpDto: OtpDto, @Res() res: Response) {
-    const { otp }: OtpDto = otpDto;
-    const accessToken: string = await this.authService.verifyOtp(otp);
-
-    return res.status(HttpStatus.OK).json({
-      message: 'OTP verified successfully',
-      success: 'Ok',
-      statusCode: HttpStatus.OK,
-      data: { accessToken }
     });
   }
 }
