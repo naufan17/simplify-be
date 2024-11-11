@@ -70,13 +70,14 @@ export class AuthService {
     return true;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<string> { 
+  async refreshAccessToken(refreshToken: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<string> { 
     const refreshTokenPayload: any = this.tokenService.verifyRefreshToken(refreshToken);
     if (!refreshTokenPayload) throw new UnauthorizedException('Invalid refresh token');
 
     const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
     if (session.expiresAt < new Date()) throw new UnauthorizedException('Refresh token expired');
+    if (session.ipAddress !== ipAddress || session.userAgent !== userAgent) throw new UnauthorizedException('Invalid credentials');
 
     const sessionUpdate: any = await this.sessionRepository.updateSession(refreshToken, new Date());
     if (!sessionUpdate) throw new InternalServerErrorException();
@@ -130,6 +131,9 @@ export class AuthService {
   }
 
   async sendEmailOtp(userId: string, email: string, subject: string): Promise<boolean> {
+    const sendOtp: UserOtp | null = await this.userOtpRepository.findByEmail(email);
+    if (sendOtp) return true;
+
     const otp: number = Math.floor(100000 + Math.random() * 900000);
     const userOtp: UserOtp = await this.userOtpRepository.save(userId, email, otp, new Date());
     if (!userOtp) throw new InternalServerErrorException();

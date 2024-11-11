@@ -14,20 +14,20 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserOtp, UserOtpSchema } from './schema/user-otp.schema';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { JwtStrategy } from 'src/common/strategy/passport/jwt.strategy';
-import { MailerService } from './mailer/mailer.service';
+import { QueueModule } from 'src/config/queue/queue.module';
 
 @Module({
   imports: [
     PassportModule,
     TypeOrmModule.forFeature([User, Session]),
     MongooseModule.forFeature([{ name: UserOtp.name, schema: UserOtpSchema }]),
+    QueueModule,
     JwtModule,
   ],
   controllers: [AuthController],
   providers: [
     AuthService, 
     TokenService, 
-    MailerService,
     LocalStrategy,
     JwtStrategy, 
     SessionRepository, 

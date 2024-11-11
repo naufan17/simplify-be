@@ -65,10 +65,12 @@ export class AuthController {
 
   @Get('refresh-access-token')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
+    const ipAddress: string | undefined = req.ip;
+    const userAgent: string | undefined = req.headers['user-agent'];
     const refreshToken: string | null = req.signedCookies['refreshToken'];
     if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
 
-    const accessToken: string = await this.authService.refreshAccessToken(refreshToken);
+    const accessToken: string = await this.authService.refreshAccessToken(refreshToken, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
       message: 'Access token refreshed successfully',

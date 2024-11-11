@@ -10,6 +10,10 @@ export class UserOtpRepository {
   async findByOtp(otp: number): Promise<UserOtp | null> {
     return await this.userOtpModel.findOne({ otp });
   }
+
+  async findByEmail(email: string): Promise<UserOtp | null> {
+    return await this.userOtpModel.findOne({ email });
+  }
   
   async save(userId: string, email: string, otp: number, createdAt: Date): Promise<UserOtp> {
     return await this.userOtpModel.create({ userId, email, otp, createdAt });

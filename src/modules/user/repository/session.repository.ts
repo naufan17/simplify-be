@@ -37,7 +37,7 @@ export class SessionRepository {
   async findByRefreshToken(refreshToken: string): Promise<Session | null> {
     return await this.sessionRepository.findOne({ 
       where: { refreshToken }, 
-      select: ['expiresAt'] 
+      select: ['ipAddress', 'userAgent','expiresAt'] 
     });
   }
 }
