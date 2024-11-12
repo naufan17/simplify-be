@@ -1,0 +1,20 @@
+# Node modules
+/node_modules
+
+# Transpilled output
+/dist
+
+# Logs
+/logs
+*.log
+
+# Test coverage reports
+/coverage
+
+# Environment files
+.env
+.env.*
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

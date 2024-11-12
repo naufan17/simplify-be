@@ -23,9 +23,7 @@ import { User } from 'src/modules/user/entitiy/user.entity';
         extra: {
           poolSize: configService.get<number>('DATABASE_POOL_SIZE'),
           timezone: configService.get<string>('DATABASE_TIMEZONE'),
-          ssl: configService.get<string>('NODE_ENV') === "production" 
-          ? { rejectUnauthorized: false } 
-          : false,  
+          ssl: false
         },
         entities: [User, Session, Url],
         migrations: ['../../../database/migrations/*.ts'],

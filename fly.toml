@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for simplify on 2024-11-12T22:07:06+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'simplify'
+primary_region = 'sin'
+
+[build]
+
+[env]
+  PORT = '8000'
+  NODE_ENV = 'production'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
