@@ -28,9 +28,7 @@ const dataSource: DataSource = new DataSource({
   cache: DATABASE_CACHE,
   extra: {
     poolSize: 10,
-    ssl: NODE_ENV === 'production'
-      ? { rejectUnauthorized: false }
-      : false,
+    ssl: false
   },
   entities: [User, Session, Url],
   migrations: ['../database/migrations/*.ts'],

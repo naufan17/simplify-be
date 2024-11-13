@@ -9,9 +9,10 @@ import moment from 'moment-timezone';
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   const port: number = Number(process.env.PORT) || 8000;
-  const hostname: string = process.env.HOSTNAME || 'localhost';
+  // const hostname: string = process.env.HOSTNAME || 'localhost';
+  const timezone: string = process.env.DATABASE_TIMEZONE || 'UTC+7';
 
-  moment.tz.setDefault('Asia/Jakarta');
+  moment.tz.setDefault(timezone);
 
   app.use(helmet());
   app.use(compression());
@@ -49,7 +50,8 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  console.log(`⚡️[server]: Server is running at http://${hostname}:${port}`);
+  // console.log(`⚡️[server]: Server is running at http://${hostname}:${port}`);
+  console.log(`⚡️[server]: Server is running at ${await app.getUrl()}`);
 }
 
 bootstrap()
