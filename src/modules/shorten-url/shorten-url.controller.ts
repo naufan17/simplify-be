@@ -10,8 +10,8 @@ export class ShortenUrlController {
 
   @Post('/shorten-url')
   async shortenUrl(@Body() shortenUrlDto: ShortenUrlDto, @Req() req: Request, @Res() res: Response) {
-    const { url }: ShortenUrlDto = shortenUrlDto;
-    const { urlId, expiresAtTimestamp }: { urlId: string; expiresAtTimestamp: number } = await this.shortenUrlService.shortenUrl(url);
+    const { url, alias }: ShortenUrlDto = shortenUrlDto;
+    const { urlId, expiresAt }: { urlId: string; expiresAt: Date } = await this.shortenUrlService.shortenUrl(url, alias);
     const shortenUrl: string = `${req.protocol}://${req.get('host')}/${urlId}`;
 
     return res.status(HttpStatus.CREATED).json({
@@ -20,7 +20,7 @@ export class ShortenUrlController {
       statusCode: HttpStatus.CREATED,
       data: { 
         url: shortenUrl,
-        expiresAt: expiresAtTimestamp
+        expiresAt
       },
     });
   }
