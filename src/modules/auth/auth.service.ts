@@ -20,7 +20,7 @@ export class AuthService {
     private readonly mailerService: MailerService
   ) {}
 
-  async register(name: string, email: string, phoneNumber: string, password: string): Promise<boolean> {
+  async register(name: string, email: string, phoneNumber: string | undefined, password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email)
     if (user) throw new ConflictException('User already exists');
 

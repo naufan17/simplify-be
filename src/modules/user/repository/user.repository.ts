@@ -25,7 +25,7 @@ export class UserRepository {
     });
   }
 
-  async save(name: string, email: string, phoneNumber: string, hashedPassword: string): Promise<User> {
+  async save(name: string, email: string, phoneNumber: string | undefined, hashedPassword: string): Promise<User> {
     return await this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
   }
 

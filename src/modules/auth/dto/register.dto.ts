@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Matches, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Matches, MinLength } from "class-validator";
 import { Match } from "src/common/decorators/match.decorator";
 
 export class RegisterDto {
@@ -10,9 +10,9 @@ export class RegisterDto {
   @IsNotEmpty()
   email!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsPhoneNumber('ID')
-  phoneNumber!: string;
+  phoneNumber?: string;
   
   @IsNotEmpty()
   @MinLength(12)
