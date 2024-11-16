@@ -37,7 +37,7 @@ async function bootstrap() {
 
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1.0',
+    defaultVersion: '1',
     prefix: 'v',
   });
 
