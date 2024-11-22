@@ -12,28 +12,28 @@ export class UserRepository {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ 
+    return this.userRepository.findOne({ 
       where: { email }, 
-      select: [ 'id', 'email', 'isVerified', 'password' ] 
+      select: ['id', 'email', 'isVerified', 'password'] 
     });
   }
 
   async findById(userId: string): Promise<User | null> {
-    return await this.userRepository.findOne({ 
+    return this.userRepository.findOne({ 
       where: { id: userId }, 
-      select: ['name', 'phoneNumber', 'email' ] 
+      select: ['name', 'phoneNumber', 'email'] 
     });
   }
 
   async save(name: string, email: string, phoneNumber: string | undefined, hashedPassword: string): Promise<User> {
-    return await this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
+    return this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
   }
 
   async updatePassword(id: string, hashedPassword: string): Promise<any> {
-    return await this.userRepository.update({ id }, { password: hashedPassword });
+    return this.userRepository.update(id, { password: hashedPassword });
   }
 
   async updateIsVerified(id: string, isVerified: boolean): Promise<any> {
-    return await this.userRepository.update({ id }, { isVerified });
+    return this.userRepository.update(id, { isVerified });
   }
 }

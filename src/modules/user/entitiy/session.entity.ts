@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity('sessions')
+@Index(['user', 'refreshToken'], { unique: true })
 export class Session {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
