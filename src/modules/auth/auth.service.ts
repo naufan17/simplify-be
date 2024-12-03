@@ -9,6 +9,7 @@ import { Session } from '../user/entitiy/session.entity';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { UserOtp } from './schema/user-otp.schema';
 import { MailerService } from './mailer/mailer.service';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
     return true;
   }
 
-  async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, refreshToken: string }> {
+  async login(email: string, password: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, sessionId: string }> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
 
@@ -51,13 +52,13 @@ export class AuthService {
     if (!sessionEnd) throw new InternalServerErrorException();
 
     const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
-    const refreshToken: string = this.tokenService.generateRefreshToken({ sub: user.id });
-    if (!accessToken || !refreshToken) throw new InternalServerErrorException();
+    const sessionId: string = randomBytes(16).toString('hex');
+    if (!accessToken || !sessionId) throw new InternalServerErrorException();
 
-    const session: Session = await this.sessionRepository.createSession(user.id, refreshToken, ipAddress, userAgent, new Date(), new Date(), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+    const session: Session = await this.sessionRepository.createSession(user.id, sessionId, ipAddress, userAgent, new Date(), new Date(), new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
     if (!session) throw new InternalServerErrorException();
 
-    return { accessToken, refreshToken }
+    return { accessToken, sessionId }
   }
 
   async verifyEmail(otp: number): Promise<boolean> {
@@ -70,29 +71,26 @@ export class AuthService {
     return true;
   }
 
-  async refreshAccessToken(refreshToken: string, ipAddress: string | undefined, userAgent: string | undefined): Promise<string> { 
-    const refreshTokenPayload: any = this.tokenService.verifyRefreshToken(refreshToken);
-    if (!refreshTokenPayload) throw new UnauthorizedException('Invalid refresh token');
-
-    const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
+  async refreshAccessToken(sessionId: string, ipAddress: string | undefined, userAgent: string | undefined) { 
+    const session: Session | null = await this.sessionRepository.findBySessionId(sessionId);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
     if (session.expiresAt < new Date()) throw new UnauthorizedException('Refresh token expired');
     if (session.ipAddress !== ipAddress || session.userAgent !== userAgent) throw new UnauthorizedException('Invalid credentials');
 
-    const sessionUpdate: any = await this.sessionRepository.updateSession(refreshToken, new Date());
+    const sessionUpdate: any = await this.sessionRepository.updateSession(sessionId, new Date());
     if (!sessionUpdate) throw new InternalServerErrorException();
 
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: refreshTokenPayload.sub });
+    const accessToken: string = this.tokenService.generateAccessToken({ sub: session.user.id });
     if (!accessToken) throw new InternalServerErrorException();
 
     return accessToken;
   }
 
-  async logout(refreshToken: string): Promise<boolean> {
-    const session: Session | null = await this.sessionRepository.findByRefreshToken(refreshToken);
+  async logout(sessionId: string): Promise<boolean> {
+    const session: Session | null = await this.sessionRepository.findBySessionId(sessionId);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
 
-    const sessionExpire: any = this.sessionRepository.endSession(refreshToken, new Date());
+    const sessionExpire: any = this.sessionRepository.endSession(sessionId, new Date());
     if (!sessionExpire) throw new InternalServerErrorException();
 
     return true;

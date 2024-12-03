@@ -5,6 +5,7 @@ import { Session } from "./session.entity";
 @Entity('users')
 @Index(['email', 'phoneNumber'], { unique: true })
 export class User {
+  
   @PrimaryGeneratedColumn('uuid')
   id!: string;
   

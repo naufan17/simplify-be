@@ -11,16 +11,16 @@ export class SessionRepository {
     private readonly sessionRepository: Repository<Session>
   ) {}
 
-  async createSession(user: any, refreshToken: string, ipAddress: string | undefined, userAgent: string | undefined, loginAt: Date, lastActiveAt: Date, expiresAt: Date): Promise<Session> {
-    return this.sessionRepository.save({ user, refreshToken, ipAddress, userAgent, loginAt, lastActiveAt, expiresAt });
+  async createSession(user: any, sessionId: string, ipAddress: string | undefined, userAgent: string | undefined, loginAt: Date, lastActiveAt: Date, expiresAt: Date): Promise<Session> {
+    return this.sessionRepository.save({ user, sessionId, ipAddress, userAgent, loginAt, lastActiveAt, expiresAt });
   }
 
-  async updateSession(refreshToken: string, lastActiveAt: Date): Promise<any> {
-    return this.sessionRepository.update({ refreshToken }, { lastActiveAt });
+  async updateSession(sessionId: string, lastActiveAt: Date): Promise<any> {
+    return this.sessionRepository.update({ sessionId }, { lastActiveAt });
   }
 
-  async endSession(refreshToken: string, expiresAt: Date): Promise<any> {
-    return this.sessionRepository.update({ refreshToken }, { expiresAt });
+  async endSession(sessionId: string, expiresAt: Date): Promise<any> {
+    return this.sessionRepository.update({ sessionId }, { expiresAt });
   }
 
   async endAllSessions(userId: string): Promise<any> {
@@ -34,10 +34,11 @@ export class SessionRepository {
     });
   }
 
-  async findByRefreshToken(refreshToken: string): Promise<Session | null> {
-    return this.sessionRepository.findOne({ 
-      where: { refreshToken }, 
-      select: ['ipAddress', 'userAgent','expiresAt'] 
-    });
+  async findBySessionId(sessionId: string): Promise<Session | null> {
+    return this.sessionRepository.createQueryBuilder('session')
+      .leftJoinAndSelect('session.user', 'user')
+      .select(['session.ipAddress', 'session.userAgent', 'session.expiresAt', 'user.id'])
+      .where('session.sessionId = :sessionId', { sessionId })
+      .getOne();
   }
 }

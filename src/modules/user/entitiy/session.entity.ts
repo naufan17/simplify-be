@@ -3,16 +3,14 @@ import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeor
 import { User } from "./user.entity";
 
 @Entity('sessions')
-@Index(['user', 'refreshToken'], { unique: true })
+@Index(['user', 'sessionId'], { unique: true })
 export class Session {
+
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => User, (user: any) => user.session, { onDelete: 'CASCADE' })
-  user!: User;
-
   @Column({ type: 'text' })
-  refreshToken!: string;
+  sessionId!: string;
 
   @Column({ length: 45, nullable: true })
   ipAddress!: string;
@@ -28,4 +26,7 @@ export class Session {
 
   @Column({ type: 'timestamp' })  
   expiresAt!: Date
+
+  @ManyToOne(() => User, (user: any) => user.session, { onDelete: 'CASCADE' })
+  user!: User;
 }

@@ -21,24 +21,12 @@ export class TokenService {
     this.configService.set('JWT_SECRET_ACCESS_TOKEN', secretKey);
   }
 
-  updateRefreshToken(secretKey: string): void {
-    this.configService.set('JWT_SECRET_REFRESH_TOKEN', secretKey);
-  }
-
   @Cron(CronExpression.EVERY_HOUR)
   rotateAccesssToken(): void {
     const accessToken = this.generateSecretKey();
     this.updateAccessToken(accessToken);
 
     console.log(`Rotated secret key access token: ${accessToken}`);
-  }
-
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
-  rotateRefreshToken(): void {
-    const refreshToken = this.generateSecretKey();
-    this.updateRefreshToken(refreshToken);
-
-    console.log(`Rotated secret key refresh token: ${refreshToken}`);
   }
 
   generateAccessToken(payload: any): string {
@@ -48,22 +36,9 @@ export class TokenService {
     });
   }
 
-  generateRefreshToken(payload: any): string {
-    return this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
-      expiresIn: this.configService.get<string>('REFRESH_TOKEN_EXPIRES'),
-    });
-  }
-
   verifyAccessToken(accessToken: string): JwtPayload {
     return this.jwtService.verify(accessToken, {
       secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
-    });
-  }
-
-  verifyRefreshToken(refreshToken: string): JwtPayload {
-    return this.jwtService.verify(refreshToken, {
-      secret: this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
     });
   }
 }

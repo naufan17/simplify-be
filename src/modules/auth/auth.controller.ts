@@ -32,9 +32,9 @@ export class AuthController {
     const { email, password }: LoginDto = loginDto;
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
-    const { accessToken, refreshToken }: { accessToken: string, refreshToken: string } = await this.authService.login(email, password, ipAddress, userAgent);
+    const { accessToken, sessionId }: { accessToken: string, sessionId: string } = await this.authService.login(email, password, ipAddress, userAgent);
 
-    res.cookie('refreshToken', refreshToken, { 
+    res.cookie('refreshToken', sessionId, { 
       httpOnly: true,
       secure: true,
       signed: true,
@@ -67,10 +67,10 @@ export class AuthController {
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
-    const refreshToken: string | null = req.signedCookies['refreshToken'];
-    if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
+    const sessionId: string | null = req.signedCookies['refreshToken'];
+    if (!sessionId) throw new UnauthorizedException('Invalid credentials');
 
-    const accessToken: string = await this.authService.refreshAccessToken(refreshToken, ipAddress, userAgent);
+    const accessToken: string = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
       message: 'Access token refreshed successfully',
@@ -82,10 +82,10 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const refreshToken: string | null = req.signedCookies['refreshToken'];
-    if (!refreshToken) throw new UnauthorizedException('Invalid credentials');
+    const sessionId: string | null = req.signedCookies['refreshToken'];
+    if (!sessionId) throw new UnauthorizedException('Invalid credentials');
 
-    await this.authService.logout(refreshToken);
+    await this.authService.logout(sessionId);
     res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
