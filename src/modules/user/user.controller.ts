@@ -3,7 +3,7 @@ import { Controller, Get, HttpStatus, Req, Res, UseGuards } from '@nestjs/common
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../common/guard/auth/jwt-auth.guard';
-import { User } from './entitiy/user.entity';
+import { User } from './entity/user.entity';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
 
 @Controller('user')

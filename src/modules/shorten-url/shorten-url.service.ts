@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { UrlRepository } from './repository/url.repository';
-import { Url } from './entitiy/url.entitiy';
+import { Url } from './entity/url.entity';
 
 @Injectable()
 export class ShortenUrlService {

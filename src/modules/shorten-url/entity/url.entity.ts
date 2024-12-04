@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('urls')
 export class Url {
+  
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

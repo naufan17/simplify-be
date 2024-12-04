@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Url } from "../entitiy/url.entitiy";
+import { Url } from "../entity/url.entity";
 
 @Injectable()
 export class UrlRepository {
@@ -15,6 +15,9 @@ export class UrlRepository {
   }
 
   async findUrl(urlId: string): Promise<Url | null> {
-    return await this.urlRepository.findOne({ where: { urlId }, select: ['url', 'expiresAt'] });
+    return await this.urlRepository.findOne({ 
+      where: { urlId }, 
+      select: ['url', 'expiresAt'] 
+    });
   }
 }

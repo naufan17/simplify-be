@@ -4,7 +4,10 @@ import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
-  constructor(@Inject(WINSTON_MODULE_NEST_PROVIDER) private readonly logger: LoggerService) {}
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER) 
+    private readonly logger: LoggerService
+  ) {}
 
   use(req: Request, res: Response, next: NextFunction): void {
     const start: number = Date.now();

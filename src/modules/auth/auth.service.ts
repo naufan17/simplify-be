@@ -2,10 +2,10 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../user/repository/user.repository';
 import bcrypt from 'bcryptjs';
-import { User } from '../user/entitiy/user.entity';
+import { User } from '../user/entity/user.entity';
 import { TokenService } from './token/token.service';
 import { SessionRepository } from '../user/repository/session.repository';
-import { Session } from '../user/entitiy/session.entity';
+import { Session } from '../user/entity/session.entity';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { UserOtp } from './schema/user-otp.schema';
 import { MailerService } from './mailer/mailer.service';

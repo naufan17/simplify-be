@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Url } from 'src/modules/shorten-url/entitiy/url.entitiy';
-import { Session } from 'src/modules/user/entitiy/session.entity';
-import { User } from 'src/modules/user/entitiy/user.entity';
+import { Qrcode } from 'src/modules/qrcode/entity/qrcode.entity';
+import { Url } from 'src/modules/shorten-url/entity/url.entity';
+import { Session } from 'src/modules/user/entity/session.entity';
+import { User } from 'src/modules/user/entity/user.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { User } from 'src/modules/user/entitiy/user.entity';
           timezone: configService.get<string>('DATABASE_TIMEZONE'),
           ssl: false
         },
-        entities: [User, Session, Url],
+        entities: [User, Session, Url, Qrcode],
         migrations: ['../../../database/migrations/*.ts'],
       }),
     }),
