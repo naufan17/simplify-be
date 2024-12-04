@@ -1,8 +1,8 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailerProcessor } from '../../modules/auth/mailer/mailer.processor';
-import { MailerService } from 'src/modules/auth/mailer/mailer.service';
+import { MailerProcessor } from '../../modules/mailer/mailer.processor';
+import { MailerService } from '../../modules/mailer/mailer.service';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { MailerService } from 'src/modules/auth/mailer/mailer.service';
     })
   ],
   providers: [MailerProcessor, MailerService],
-  exports: [MailerProcessor, MailerService],
+  exports: [MailerProcessor, MailerService, BullModule],
 })
 
 export class QueueModule {}

@@ -14,6 +14,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserOtp, UserOtpSchema } from './schema/user-otp.schema';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { JwtStrategy } from 'src/common/strategy/passport/jwt.strategy';
+import { MailerService } from '../mailer/mailer.service';
 import { QueueModule } from 'src/config/queue/queue.module';
 
 @Module({
@@ -27,7 +28,8 @@ import { QueueModule } from 'src/config/queue/queue.module';
   controllers: [AuthController],
   providers: [
     AuthService, 
-    TokenService, 
+    TokenService,
+    MailerService,
     LocalStrategy,
     JwtStrategy, 
     SessionRepository, 

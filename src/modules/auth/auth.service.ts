@@ -8,7 +8,7 @@ import { SessionRepository } from '../user/repository/session.repository';
 import { Session } from '../user/entitiy/session.entity';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { UserOtp } from './schema/user-otp.schema';
-import { MailerService } from './mailer/mailer.service';
+import { MailerService } from '../mailer/mailer.service';
 import { randomBytes } from 'crypto';
 
 @Injectable()
