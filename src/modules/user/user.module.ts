@@ -6,9 +6,9 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../common/strategy/passport/jwt.strategy';
 import { UserRepository } from './repository/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entitiy/user.entity';
+import { User } from './entity/user.entity';
 import { SessionRepository } from './repository/session.repository';
-import { Session } from './entitiy/session.entity';
+import { Session } from './entity/session.entity';
 
 @Module({
   imports: [

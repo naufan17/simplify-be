@@ -1,8 +1,9 @@
 import { DataSource } from 'typeorm';
-import { User } from './modules/user/entitiy/user.entity';
-import { Url } from './modules/shorten-url/entitiy/url.entitiy';
-import { Session } from './modules/user/entitiy/session.entity';
+import { User } from './modules/user/entity/user.entity';
+import { Url } from './modules/shorten-url/entity/url.entity';
+import { Session } from './modules/user/entity/session.entity';
 import dotenv from 'dotenv';
+import { Qrcode } from './modules/qrcode/entity/qrcode.entity';
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ const dataSource: DataSource = new DataSource({
     poolSize: 10,
     ssl: false
   },
-  entities: [User, Session, Url],
+  entities: [User, Session, Url, Qrcode],
   migrations: ['../database/migrations/*.ts'],
 });
 

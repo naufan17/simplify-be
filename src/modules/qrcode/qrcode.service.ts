@@ -3,12 +3,19 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import QRCodeStyling, { CornerDotType, CornerSquareType, DotType } from 'qr-code-styling';
 import { JSDOM } from 'jsdom';
 import nodeCanvas from 'canvas';
+import { QrcodeRepository } from './repository/qrcode.repository';
+import { Qrcode } from './entity/qrcode.entity';
 
 @Injectable()
 export class QrcodeService {
+  constructor(private readonly qrcodeRepository: QrcodeRepository) {}
+
   async textQrcode(text: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
     const qrcode: string = await this.generateQrcode(text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
+
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('text', text, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
@@ -16,6 +23,9 @@ export class QrcodeService {
   async urlQrcode(url: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
     const qrcode: string = await this.generateQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
+
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('url', url, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
@@ -25,6 +35,9 @@ export class QrcodeService {
     const qrcode: string = await this.generateQrcode(formattedEmail, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('email', formattedEmail, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
+
     return qrcode;
   }
 
@@ -33,6 +46,9 @@ export class QrcodeService {
     const qrcode: string = await this.generateQrcode(formattedWhatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('whatsapp', formattedWhatsapp, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
+
     return qrcode;
   }
 
@@ -40,6 +56,9 @@ export class QrcodeService {
     const formattedWifi: string = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
     const qrcode: string = await this.generateQrcode(formattedWifi, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
+
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('wifi', formattedWifi, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
@@ -86,6 +105,9 @@ export class QrcodeService {
 
     const qrcode: string = await this.generateQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
+
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('social media', url, qrcode, new Date());
+    if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }

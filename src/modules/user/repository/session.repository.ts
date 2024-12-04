@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Session } from "../entitiy/session.entity";
+import { Session } from "../entity/session.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

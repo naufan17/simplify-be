@@ -63,7 +63,7 @@ export class AuthController {
     });
   }
 
-  @Get('refresh-access-token')
+  @Get('refresh')
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
