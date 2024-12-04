@@ -96,7 +96,7 @@ export class AuthService {
     return true;
   }
 
-  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  async changePassword(sessionId: string, userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findPasswordById(userId);
     if (!user) throw new NotFoundException('User not found');
     
@@ -108,6 +108,9 @@ export class AuthService {
 
     const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);
     if (!userUpdate) throw new InternalServerErrorException();
+
+    await this.mailerService.sendEmailChangePassword(user.email, 'Change Password');
+    await this.logout(sessionId);
 
     return true;
   }

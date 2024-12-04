@@ -19,4 +19,15 @@ export class MailerService {
       console.error('Failed to add email job to queue:', error);
     }
   }
+
+  async sendEmailChangePassword(to: string, subject: string): Promise<void> {
+    const templateName: string = 'change-password-email';
+
+    try {
+      await this.emailQueue.add('sendEmail', { to, subject, templateName });
+      console.log(`Email job added to queue: ${to}`);
+    } catch (error) {
+      console.error('Failed to add email job to queue:', error);
+    }
+  }
 }

@@ -21,7 +21,10 @@ export class AuthController {
     await this.authService.register(name, email, phoneNumber, password);
 
     return res.status(HttpStatus.CREATED).json({
-      message: ['User created successfully', 'Verify your email to login', 'OTP sent to your email'],
+      message: [
+        'User created successfully', 
+        'Verify your email to login', 'OTP sent to your email'
+      ],
       success: 'Created',
       statusCode: HttpStatus.CREATED,
     });  
@@ -83,7 +86,7 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const sessionId: string | null = req.signedCookies['refreshToken'];
+    const sessionId: string = req.signedCookies['refreshToken'];
     if (!sessionId) throw new UnauthorizedException('Invalid credentials');
 
     await this.authService.logout(sessionId);
@@ -100,11 +103,17 @@ export class AuthController {
   @Post('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
     const userId: string = req.user.sub;
+    const sessionId: string = req.signedCookies['refreshToken'];
     const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
-    await this.authService.changePassword(userId, oldPassword, newPassword);
+
+    await this.authService.changePassword(sessionId, userId, oldPassword, newPassword);
+    res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
-      message: 'Password changed successfully',
+      message: [
+        'Password changed successfully', 
+        'Please login with new password'
+      ],
       success: 'Ok',
       statusCode: HttpStatus.OK
     })
