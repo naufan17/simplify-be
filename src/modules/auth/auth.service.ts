@@ -6,8 +6,8 @@ import { User } from '../user/entity/user.entity';
 import { TokenService } from './token/token.service';
 import { SessionRepository } from '../user/repository/session.repository';
 import { Session } from '../user/entity/session.entity';
-import { UserOtpRepository } from './repository/user-otp.repository';
-import { UserOtp } from './schema/user-otp.schema';
+import { UserOtpRepository } from '../mailer/repository/user-otp.repository';
+import { UserOtp } from '../mailer/schema/user-otp.schema';
 import { MailerService } from '../mailer/mailer.service';
 import { randomBytes } from 'crypto';
 
@@ -31,7 +31,7 @@ export class AuthService {
     const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
-    await this.sendEmailOtp(newUser.id, newUser.email, 'Verify Email');
+    await this.sendOtp(newUser.id, newUser.email, 'Verify Email');
 
     return true;
   }
@@ -44,7 +44,7 @@ export class AuthService {
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
 
     if (user.isVerified === false) {
-      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
+      await this.sendOtp(user.id, user.email, 'Verify Email');
       throw new UnauthorizedException('User is not verified, check your email to verify');
     }
 
@@ -95,12 +95,28 @@ export class AuthService {
 
     return true;
   }
+
+  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+    const user: User | null = await this.userRepository.findPasswordById(userId);
+    if (!user) throw new NotFoundException('User not found');
+    
+    const isPasswordValid: boolean = await bcrypt.compare(oldPassword, user.password);
+    if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
+
+    const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+    if (!hashedPassword) throw new InternalServerErrorException();
+
+    const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);
+    if (!userUpdate) throw new InternalServerErrorException();
+
+    return true;
+  }
   
   async forgotPassword(email: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
 
-    await this.sendEmailOtp(user.id, user.email, 'Reset Password');
+    await this.sendOtp(user.id, user.email, 'Reset Password');
 
     return true;
   }
@@ -128,7 +144,7 @@ export class AuthService {
     return true;
   }
 
-  async sendEmailOtp(userId: string, email: string, subject: string): Promise<boolean> {
+  async sendOtp(userId: string, email: string, subject: string): Promise<boolean> {
     const sendOtp: UserOtp | null = await this.userOtpRepository.findByEmail(email);
     if (sendOtp) return true;
 
@@ -136,7 +152,7 @@ export class AuthService {
     const userOtp: UserOtp = await this.userOtpRepository.save(userId, email, otp, new Date());
     if (!userOtp) throw new InternalServerErrorException();
 
-    await this.mailerService.sendEmail(email, subject, otp.toString());
+    await this.mailerService.sendEmailOtp(email, subject, otp.toString());
 
     return true;
   }
@@ -149,7 +165,7 @@ export class AuthService {
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
 
     if (user.isVerified === false) {
-      await this.sendEmailOtp(user.id, user.email, 'Verify Email');
+      await this.sendOtp(user.id, user.email, 'Verify Email');
       throw new UnauthorizedException('User is not verified, check your email to verify');
     }
 

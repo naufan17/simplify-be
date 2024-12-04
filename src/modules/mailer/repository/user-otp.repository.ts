@@ -5,7 +5,10 @@ import { UserOtp } from "../schema/user-otp.schema";
 
 @Injectable()
 export class UserOtpRepository {
-  constructor(@InjectModel(UserOtp.name) private readonly userOtpModel: Model<UserOtp>) {}
+  constructor(
+    @InjectModel(UserOtp.name) 
+    private readonly userOtpModel: Model<UserOtp>
+  ) {}
 
   async findByOtp(otp: number): Promise<UserOtp | null> {
     return this.userOtpModel.findOne({ otp });

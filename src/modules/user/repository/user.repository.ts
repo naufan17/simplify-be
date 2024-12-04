@@ -25,6 +25,13 @@ export class UserRepository {
     });
   }
 
+  async findPasswordById(userId: string): Promise<User | null> {
+    return this.userRepository.findOne({ 
+      where: { id: userId }, 
+      select: ['password'] 
+    });
+  }
+
   async save(name: string, email: string, phoneNumber: string | undefined, hashedPassword: string): Promise<User> {
     return this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
   }

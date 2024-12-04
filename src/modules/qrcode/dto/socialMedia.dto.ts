@@ -1,6 +1,7 @@
 import { IsEnum, IsHexColor, IsLowercase, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class SocialMediaDto {
+  
   @IsNotEmpty()
   @IsLowercase()
   @IsEnum(['facebook', 'instagram', 'x', 'linkedin'])

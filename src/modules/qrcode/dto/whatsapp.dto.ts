@@ -1,6 +1,7 @@
 import { IsEnum, IsHexColor, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber } from "class-validator";
 
 export class WhatsappDto {
+  
   @IsPhoneNumber('ID')
   @IsNotEmpty()
   whatsapp!: string

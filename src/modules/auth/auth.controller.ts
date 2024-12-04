@@ -9,6 +9,7 @@ import { OtpDto } from './dto/otp.dto';
 // import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -93,6 +94,20 @@ export class AuthController {
       success: 'Ok',
       statusCode: HttpStatus.OK
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
+    const userId: string = req.user.sub;
+    const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
+    await this.authService.changePassword(userId, oldPassword, newPassword);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'Password changed successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK
+    })
   }
 
   @Post('forgot-password')

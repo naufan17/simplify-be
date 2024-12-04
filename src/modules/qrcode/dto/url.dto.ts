@@ -1,6 +1,7 @@
 import { IsEnum, IsHexColor, IsNotEmpty, IsNumber, IsOptional, IsUrl } from "class-validator";
 
 export class UrlDto {
+  
   @IsUrl()
   @IsNotEmpty()
   url!: string;

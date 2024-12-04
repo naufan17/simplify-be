@@ -1,6 +1,7 @@
 import { IsEmail, IsEnum, IsHexColor, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class EmailDto {
+  
   @IsEmail()
   @IsNotEmpty()
   email!: string;

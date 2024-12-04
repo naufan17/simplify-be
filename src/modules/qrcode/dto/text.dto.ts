@@ -1,6 +1,7 @@
 import { IsEnum, IsHexColor, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class TextDto {
+  
   @IsString()
   @IsNotEmpty()
   text!: string;

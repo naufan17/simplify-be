@@ -6,12 +6,14 @@ import { Queue } from 'bullmq';
 export class MailerService {
   constructor(
     @InjectQueue('emailQueue') 
-    private readonly emailQueue: Queue
+    private readonly emailQueue: Queue,
   ) {}
 
-  async sendEmail(to: string, subject: string, otp: string): Promise<void> {
+  async sendEmailOtp(to: string, subject: string, content: string): Promise<void> {
+    const templateName: string = 'otp-email';
+
     try {
-      await this.emailQueue.add('sendEmail', { to, subject, otp });
+      await this.emailQueue.add('sendEmail', { to, subject, templateName, content });
       console.log(`Email job added to queue: ${to}`);
     } catch (error) {
       console.error('Failed to add email job to queue:', error);

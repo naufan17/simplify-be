@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 
 @Schema({ timestamps: true })
 export class UserOtp extends Document {
+  
   @Prop({ required: true, unique: true })
   userId!: string;
 
