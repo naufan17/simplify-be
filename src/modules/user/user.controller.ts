@@ -2,7 +2,7 @@
 import { Controller, Get, HttpStatus, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../../common/guard/auth/jwt-auth.guard';
+import { AccessJwtAuthGuard } from '../../common/guard/auth/access-jwt-auth.guard';
 import { User } from './entity/user.entity';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
 
@@ -10,7 +10,7 @@ import { AuthenticatedRequest } from 'src/types/authenticated-request';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @Get('profile')
   async getProfile(@Req() req: AuthenticatedRequest, @Res() res: Response) {
     const userId: string = req.user.sub;
@@ -24,7 +24,7 @@ export class UserController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @Get('session')
   async getSession(@Req() req: AuthenticatedRequest, @Res() res: Response) {
     const userId: string = req.user.sub;

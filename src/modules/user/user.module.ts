@@ -3,7 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from '../../common/strategy/passport/jwt.strategy';
+import { AccessJwtStrategy } from '../../common/strategy/passport/access-jwt.strategy';
 import { UserRepository } from './repository/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
@@ -19,7 +19,7 @@ import { Session } from './entity/session.entity';
   controllers: [UserController],
   providers: [
     UserService, 
-    JwtStrategy, 
+    AccessJwtStrategy, 
     UserRepository, 
     SessionRepository
   ],

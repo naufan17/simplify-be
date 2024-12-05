@@ -13,9 +13,12 @@ import { UserRepository } from '../user/repository/user.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserOtp, UserOtpSchema } from '../mailer/schema/user-otp.schema';
 import { UserOtpRepository } from '../mailer/repository/user-otp.repository';
-import { JwtStrategy } from 'src/common/strategy/passport/jwt.strategy';
+import { AccessJwtStrategy } from 'src/common/strategy/passport/access-jwt.strategy';
 import { MailerService } from '../mailer/mailer.service';
 import { QueueModule } from 'src/config/queue/queue.module';
+import { ResetJwtAuthGuard } from 'src/common/guard/auth/reset-jwt-auth.guard';
+import { EmailService } from './email/email.service';
+import { ResetJwtStrategy } from 'src/common/strategy/passport/reset-jwt-strategy';
 
 @Module({
   imports: [
@@ -29,9 +32,11 @@ import { QueueModule } from 'src/config/queue/queue.module';
   providers: [
     AuthService, 
     TokenService,
+    EmailService,
     MailerService,
     LocalStrategy,
-    JwtStrategy, 
+    AccessJwtStrategy,
+    ResetJwtStrategy,
     SessionRepository, 
     UserRepository, 
     UserOtpRepository, 

@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
+import { AccessJwtAuthGuard } from 'src/common/guard/auth/access-jwt-auth.guard';
 import { LocalAuthGuard } from 'src/common/guard/auth/local-auth.guard';
+import { ResetJwtAuthGuard } from 'src/common/guard/auth/reset-jwt-auth.guard';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -69,9 +70,7 @@ export class AuthController {
   async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
-    const sessionId: string | null = req.signedCookies['refreshToken'];
-    if (!sessionId) throw new UnauthorizedException('Invalid credentials');
-
+    const sessionId: string = req.signedCookies['refreshToken'];
     const accessToken: string = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
@@ -84,8 +83,7 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    const sessionId: string = req.signedCookies['refreshToken'];
-    if (!sessionId) throw new UnauthorizedException('Invalid credentials');
+    const sessionId: string  = req.signedCookies['refreshToken'];
 
     await this.authService.logout(sessionId);
     res.clearCookie('refreshToken');
@@ -97,15 +95,14 @@ export class AuthController {
     });
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessJwtAuthGuard)
   @Post('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
     const userId: string = req.user.sub;
     const sessionId: string = req.signedCookies['refreshToken'];
     const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
 
-    await this.authService.changePassword(userId, oldPassword, newPassword);
-    await this.authService.logout(sessionId);
+    await this.authService.changePassword(sessionId, userId, oldPassword, newPassword);
     res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
@@ -119,31 +116,30 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Res() res: Response) {
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Req() req: Request, @Res() res: Response) {
     const { email }: ForgotPasswordDto = forgotPasswordDto;
-    await this.authService.forgotPassword(email);
+    const url: string = `${req.protocol}://${req.get('host')}`;
+    await this.authService.forgotPassword(email, url);
 
     return res.status(HttpStatus.OK).json({
-      message: 'OTP sent to your email',
+      message: 'Password reset link has been sent to your email',
       success: 'Ok',
       statusCode: HttpStatus.OK,
     });
   }
 
-  @Post('verify-otp')
-  async verifyOtp(@Body() otpDto: OtpDto, @Res() res: Response) {
-    const { otp }: OtpDto = otpDto;
-    const accessToken: string = await this.authService.verifyOtp(otp);
+  @Get('reset-password')
+  async validateResetToken(@Query('token') token: string, @Res() res: Response) {
+    await this.authService.validateResetToken(token);
 
     return res.status(HttpStatus.OK).json({
-      message: 'OTP verified successfully',
+      message: 'Reset token is valid',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { accessToken }
     });
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ResetJwtAuthGuard)
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
     const userId: string = req.user.sub;

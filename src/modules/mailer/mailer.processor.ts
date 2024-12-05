@@ -30,7 +30,7 @@ export class MailerProcessor extends WorkerHost {
     const templatePath = path.join('templates', `${templateName}.html`);
     let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-    if (content) htmlContent = htmlContent.replace('{{ otp }}', content);
+    if (content) htmlContent = htmlContent.replace('{{ content }}', content);
 
     return htmlContent;
   }

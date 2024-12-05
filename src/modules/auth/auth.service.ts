@@ -10,6 +10,7 @@ import { UserOtpRepository } from '../mailer/repository/user-otp.repository';
 import { UserOtp } from '../mailer/schema/user-otp.schema';
 import { MailerService } from '../mailer/mailer.service';
 import { randomBytes } from 'crypto';
+import { EmailService } from './email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     private readonly userOtpRepository: UserOtpRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly tokenService: TokenService,
+    private readonly emailService: EmailService,
     private readonly mailerService: MailerService
   ) {}
 
@@ -31,7 +33,7 @@ export class AuthService {
     const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
-    await this.sendOtp(newUser.id, newUser.email, 'Verify Email');
+    await this.emailService.sendOtp(newUser.id, newUser.email, 'Verify Email');
 
     return true;
   }
@@ -54,7 +56,7 @@ export class AuthService {
     const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
     if (!userOtp) throw new UnauthorizedException('Invalid OTP');
 
-    const isVerified = await this.userRepository.updateIsVerified(userOtp.userId, true);
+    const isVerified: any = await this.userRepository.updateIsVerified(userOtp.userId, true);
     if (!isVerified) throw new InternalServerErrorException();
 
     return true;
@@ -85,7 +87,7 @@ export class AuthService {
     return true;
   }
 
-  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  async changePassword(sessionId: string, userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findPasswordById(userId);
     if (!user) throw new NotFoundException('User not found');
     
@@ -98,28 +100,29 @@ export class AuthService {
     const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);
     if (!userUpdate) throw new InternalServerErrorException();
 
+    await this.logout(sessionId);
     await this.mailerService.sendEmailChangePassword(user.email, 'Change Password');
 
     return true;
   }
   
-  async forgotPassword(email: string): Promise<boolean> {
+  async forgotPassword(email: string, url: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
 
-    await this.sendOtp(user.id, user.email, 'Reset Password');
+    await this.emailService.sendPasswordResetLink(user.id, user.email, 'Reset Password', url);
 
     return true;
   }
 
-  async verifyOtp(otp: number): Promise<string> {
-    const userOtp: UserOtp | null = await this.userOtpRepository.findByOtp(otp);
-    if (!userOtp) throw new UnauthorizedException('Invalid OTP');
+  async validateResetToken(token: string): Promise<boolean> {
+    try {
+      await this.tokenService.verifyResetToken(token);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
 
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: userOtp.userId });
-    if (!accessToken) throw new InternalServerErrorException();
-
-    return accessToken;
+    return true;
   }
 
   async resetPassword(userId: string, password: string): Promise<boolean> {
@@ -143,28 +146,15 @@ export class AuthService {
     if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
 
     if (user.isVerified === false) {
-      await this.sendOtp(user.id, user.email, 'Verify Email');
+      await this.emailService.sendOtp(user.id, user.email, 'Verify Email');
       throw new UnauthorizedException('User is not verified, check your email to verify');
     }
 
-    if (user && isPasswordValid === true && user.isVerified === true) {
+    if (user && isPasswordValid && user.isVerified) {
       const { password, ...result } = user;
       return result;
     }
 
     return null;
-  }
-
-  async sendOtp(userId: string, email: string, subject: string): Promise<boolean> {
-    const sendOtp: UserOtp | null = await this.userOtpRepository.findByEmail(email);
-    if (sendOtp) return true;
-
-    const otp: number = Math.floor(100000 + Math.random() * 900000);
-    const userOtp: UserOtp = await this.userOtpRepository.save(userId, email, otp, new Date());
-    if (!userOtp) throw new InternalServerErrorException();
-
-    await this.mailerService.sendEmailOtp(email, subject, otp.toString());
-
-    return true;
   }
 }

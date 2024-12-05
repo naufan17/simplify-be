@@ -36,9 +36,22 @@ export class TokenService {
     });
   }
 
+  generateResetToken(payload: any): string {
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_SECRET_RESET_TOKEN'),
+      expiresIn: this.configService.get<string>('RESET_TOKEN_EXPIRES'),
+    });
+  }
+
   verifyAccessToken(accessToken: string): JwtPayload {
     return this.jwtService.verify(accessToken, {
       secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
+    });
+  }
+
+  verifyResetToken(resetToken: string): JwtPayload {
+    return this.jwtService.verify(resetToken, {
+      secret: this.configService.get<string>('JWT_SECRET_RESET_TOKEN'),
     });
   }
 }
