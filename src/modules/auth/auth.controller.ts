@@ -1,14 +1,13 @@
 import { Body, Controller, Get, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
 import { Request, Response } from 'express';
+import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
+import { LocalAuthGuard } from 'src/common/guard/auth/local-auth.guard';
+import { AuthenticatedRequest } from 'src/types/authenticated-request';
+import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { resetPasswordDto } from './dto/reset-password.dto';
 import { OtpDto } from './dto/otp.dto';
-// import { LocalAuthGuard } from '../../common/guard/auth/local-auth.guard';
-import { JwtAuthGuard } from 'src/common/guard/auth/jwt-auth.guard';
-import { AuthenticatedRequest } from 'src/types/authenticated-request';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
@@ -30,13 +29,12 @@ export class AuthController {
     });  
   }
 
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Req() req: Request, @Res() res: Response) {
-    const { email, password }: LoginDto = loginDto;
+  async login(@Req() req: Request, @Res() res: Response) {
     const ipAddress: string | undefined = req.ip;
     const userAgent: string | undefined = req.headers['user-agent'];
-    const { accessToken, sessionId }: { accessToken: string, sessionId: string } = await this.authService.login(email, password, ipAddress, userAgent);
+    const { accessToken, sessionId }: { accessToken: string, sessionId: string } = await this.authService.login(req.user, ipAddress, userAgent);
 
     res.cookie('refreshToken', sessionId, { 
       httpOnly: true,
@@ -106,7 +104,8 @@ export class AuthController {
     const sessionId: string = req.signedCookies['refreshToken'];
     const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
 
-    await this.authService.changePassword(sessionId, userId, oldPassword, newPassword);
+    await this.authService.changePassword(userId, oldPassword, newPassword);
+    await this.authService.logout(sessionId);
     res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
