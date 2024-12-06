@@ -115,16 +115,6 @@ export class AuthService {
     return true;
   }
 
-  async validateResetToken(token: string): Promise<boolean> {
-    try {
-      await this.tokenService.verifyResetToken(token);
-    } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
-    }
-
-    return true;
-  }
-
   async resetPassword(userId: string, password: string): Promise<boolean> {
     const user: User | null = await this.userRepository.findById(userId);
     if (!user) throw new NotFoundException('User not found');

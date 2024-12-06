@@ -16,9 +16,9 @@ import { UserOtpRepository } from '../mailer/repository/user-otp.repository';
 import { AccessJwtStrategy } from 'src/common/strategy/passport/access-jwt.strategy';
 import { MailerService } from '../mailer/mailer.service';
 import { QueueModule } from 'src/config/queue/queue.module';
-import { ResetJwtAuthGuard } from 'src/common/guard/auth/reset-jwt-auth.guard';
 import { EmailService } from './email/email.service';
 import { ResetJwtStrategy } from 'src/common/strategy/passport/reset-jwt-strategy';
+import { ValidateResetJwtStrategy } from 'src/common/strategy/passport/validate-reset-jwt-strategy';
 
 @Module({
   imports: [
@@ -37,6 +37,7 @@ import { ResetJwtStrategy } from 'src/common/strategy/passport/reset-jwt-strateg
     LocalStrategy,
     AccessJwtStrategy,
     ResetJwtStrategy,
+    ValidateResetJwtStrategy,
     SessionRepository, 
     UserRepository, 
     UserOtpRepository, 

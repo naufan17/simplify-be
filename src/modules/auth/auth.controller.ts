@@ -10,6 +10,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { resetPasswordDto } from './dto/reset-password.dto';
 import { OtpDto } from './dto/otp.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ValidateResetJwtAuthGuard } from 'src/common/guard/auth/validate-reset-jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -128,9 +129,9 @@ export class AuthController {
     });
   }
 
+  @UseGuards(ValidateResetJwtAuthGuard)
   @Get('reset-password')
-  async validateResetToken(@Query('token') token: string, @Res() res: Response) {
-    await this.authService.validateResetToken(token);
+  async validateResetToken(@Res() res: Response) {
 
     return res.status(HttpStatus.OK).json({
       message: 'Reset token is valid',
