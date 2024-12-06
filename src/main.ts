@@ -4,19 +4,17 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import { INestApplication, RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
-import moment from 'moment-timezone';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
+  const configService: ConfigService = new ConfigService();
   const app: INestApplication = await NestFactory.create(AppModule);
-  const port: number = Number(process.env.PORT) || 8000;
+  const port: number = Number(configService.get('PORT')) || 8000;
   // const hostname: string = process.env.HOSTNAME || 'localhost';
-  const timezone: string = process.env.DATABASE_TIMEZONE || 'UTC+7';
-
-  moment.tz.setDefault(timezone);
 
   app.use(helmet());
   app.use(compression());
-  app.use(cookieParser(process.env.COOKIE_SECRET));  
+  app.use(cookieParser(configService.get('COOKIE_SECRET')));  
 
   app.enableCors({
     origin: true,

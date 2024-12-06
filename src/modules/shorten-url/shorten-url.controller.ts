@@ -9,7 +9,11 @@ export class ShortenUrlController {
   constructor(private readonly shortenUrlService: ShortenUrlService) {}
 
   @Post('/shorten-url')
-  async shortenUrl(@Body() shortenUrlDto: ShortenUrlDto, @Req() req: Request, @Res() res: Response) {
+  async shortenUrl(
+    @Body() shortenUrlDto: ShortenUrlDto, 
+    @Req() req: Request, 
+    @Res() res: Response
+  ) {
     const { url, alias }: ShortenUrlDto = shortenUrlDto;
     const { urlId, expiresAt }: { urlId: string; expiresAt: Date } = await this.shortenUrlService.shortenUrl(url, alias);
     const shortenUrl: string = `${req.protocol}://${req.get('host')}/${urlId}`;
@@ -27,7 +31,10 @@ export class ShortenUrlController {
 
   @Version(VERSION_NEUTRAL)
   @Get('/:urlId')
-  async redirectToOriginalUrl(@Param() redirectUrlDto: RedirectUrlDto, @Res() res: Response) {
+  async redirectToOriginalUrl(
+    @Param() redirectUrlDto: RedirectUrlDto, 
+    @Res() res: Response
+  ) {
     const { urlId }: RedirectUrlDto = redirectUrlDto;
     const originalUrl: string = await this.shortenUrlService.getOriginalUrl(urlId);
     

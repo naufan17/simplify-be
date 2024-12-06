@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Ip, Post, Req, Res, Headers, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { AccessJwtAuthGuard } from 'src/common/guard/auth/access-jwt-auth.guard';
@@ -11,14 +11,20 @@ import { resetPasswordDto } from './dto/reset-password.dto';
 import { OtpDto } from './dto/otp.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ValidateResetJwtAuthGuard } from 'src/common/guard/auth/validate-reset-jwt-auth.guard';
+import { SignedCookie } from 'src/common/decorators/signed-cookie.decorator';
+import { UserId } from 'src/common/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto, @Res() res: Response) {
+  async register(
+    @Body() registerDto: RegisterDto, 
+    @Res() res: Response
+  ) {
     const { name, email, phoneNumber, password }: RegisterDto = registerDto;
+
     await this.authService.register(name, email, phoneNumber, password);
 
     return res.status(HttpStatus.CREATED).json({
@@ -33,9 +39,12 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: Request, @Res() res: Response) {
-    const ipAddress: string | undefined = req.ip;
-    const userAgent: string | undefined = req.headers['user-agent'];
+  async login(
+    @Ip() ipAddress: string, 
+    @Headers('user-agent') userAgent: string, 
+    @Req() req: Request, 
+    @Res() res: Response
+  ) {
     const { accessToken, sessionId }: { accessToken: string, sessionId: string } = await this.authService.login(req.user, ipAddress, userAgent);
 
     res.cookie('refreshToken', sessionId, { 
@@ -56,8 +65,12 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  async verifyEmail(@Body() otpDto: OtpDto, @Res() res: Response) {
+  async verifyEmail(
+    @Body() otpDto: OtpDto, 
+    @Res() res: Response
+  ) {
     const { otp }: OtpDto = otpDto;
+
     await this.authService.verifyEmail(otp);
 
     return res.status(HttpStatus.OK).json({
@@ -68,10 +81,12 @@ export class AuthController {
   }
 
   @Get('refresh')
-  async refreshAccessToken(@Req() req: Request, @Res() res: Response) {
-    const ipAddress: string | undefined = req.ip;
-    const userAgent: string | undefined = req.headers['user-agent'];
-    const sessionId: string = req.signedCookies['refreshToken'];
+  async refreshAccessToken(
+    @SignedCookie('refreshToken') sessionId: string, 
+    @Ip() ipAddress: string, 
+    @Headers('user-agent') userAgent: string, 
+    @Res() res: Response
+  ) {
     const accessToken: string = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
@@ -83,9 +98,10 @@ export class AuthController {
   }
 
   @Get('logout')
-  async logout(@Req() req: Request, @Res() res: Response) {
-    const sessionId: string  = req.signedCookies['refreshToken'];
-
+  async logout(
+    @SignedCookie('refreshToken') sessionId: string, 
+    @Res() res: Response
+  ) {
     await this.authService.logout(sessionId);
     res.clearCookie('refreshToken');
 
@@ -98,9 +114,12 @@ export class AuthController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Post('change-password')
-  async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
-    const userId: string = req.user.sub;
-    const sessionId: string = req.signedCookies['refreshToken'];
+  async changePassword(
+    @SignedCookie('refreshToken') sessionId: string, 
+    @UserId() userId: string, 
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Res() res: Response
+  ) {
     const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
 
     await this.authService.changePassword(sessionId, userId, oldPassword, newPassword);
@@ -117,7 +136,11 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto, @Req() req: Request, @Res() res: Response) {
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto, 
+    @Req() req: Request, 
+    @Res() res: Response
+  ) {
     const { email }: ForgotPasswordDto = forgotPasswordDto;
     const url: string = `${req.protocol}://${req.get('host')}`;
     await this.authService.forgotPassword(email, url);
@@ -132,7 +155,6 @@ export class AuthController {
   @UseGuards(ValidateResetJwtAuthGuard)
   @Get('reset-password')
   async validateResetToken(@Res() res: Response) {
-
     return res.status(HttpStatus.OK).json({
       message: 'Reset token is valid',
       success: 'Ok',
@@ -142,8 +164,11 @@ export class AuthController {
 
   @UseGuards(ResetJwtAuthGuard)
   @Post('reset-password')
-  async resetPassword(@Body() resetPasswordDto: resetPasswordDto, @Req() req: AuthenticatedRequest,  @Res() res: Response) {
-    const userId: string = req.user.sub;
+  async resetPassword(
+    @UserId() userId: string, 
+    @Body() resetPasswordDto: resetPasswordDto,
+    @Res() res: Response
+  ) {
     const { password }: resetPasswordDto = resetPasswordDto;
     await this.authService.resetPassword(userId, password);
 

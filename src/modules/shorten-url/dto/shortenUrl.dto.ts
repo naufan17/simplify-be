@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString, IsUrl, Matches } from "class-validator";
 
 export class ShortenUrlDto {
+  
   @IsNotEmpty()
   @IsUrl()
   url!: string;

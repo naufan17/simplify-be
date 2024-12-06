@@ -12,6 +12,7 @@ import { UserModule } from "src/modules/user/user.module";
 import { QrcodeModule } from "src/modules/qrcode/qrcode.module";
 import { ShortenUrlModule } from "src/modules/shorten-url/shorten-url.module";
 import { MongoModule } from "src/config/database/mongo.module";
+import { HealthModule } from "src/modules/health/health.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MongoModule } from "src/config/database/mongo.module";
     MongoModule,
     ThrottleModule,
     LoggerModule,
+    HealthModule,
     AuthModule,
     UserModule,
     QrcodeModule,

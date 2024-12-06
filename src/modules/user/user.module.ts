@@ -23,6 +23,10 @@ import { Session } from './entity/session.entity';
     UserRepository, 
     SessionRepository
   ],
+  exports: [
+    UserRepository,
+    SessionRepository
+  ]
 })
 
 export class UserModule {}

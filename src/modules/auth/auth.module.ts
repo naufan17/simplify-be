@@ -8,8 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { TokenService } from './token/token.service';
 import { Session } from '../user/entity/session.entity';
 import { LocalStrategy } from '../../common/strategy/passport/local.strategy';
-import { SessionRepository } from '../user/repository/session.repository';
-import { UserRepository } from '../user/repository/user.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserOtp, UserOtpSchema } from '../mailer/schema/user-otp.schema';
 import { UserOtpRepository } from '../mailer/repository/user-otp.repository';
@@ -19,6 +17,7 @@ import { QueueModule } from 'src/config/queue/queue.module';
 import { EmailService } from './email/email.service';
 import { ResetJwtStrategy } from 'src/common/strategy/passport/reset-jwt-strategy';
 import { ValidateResetJwtStrategy } from 'src/common/strategy/passport/validate-reset-jwt-strategy';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -27,6 +26,7 @@ import { ValidateResetJwtStrategy } from 'src/common/strategy/passport/validate-
     MongooseModule.forFeature([{ name: UserOtp.name, schema: UserOtpSchema }]),
     QueueModule,
     JwtModule,
+    UserModule
   ],
   controllers: [AuthController],
   providers: [
@@ -38,8 +38,6 @@ import { ValidateResetJwtStrategy } from 'src/common/strategy/passport/validate-
     AccessJwtStrategy,
     ResetJwtStrategy,
     ValidateResetJwtStrategy,
-    SessionRepository, 
-    UserRepository, 
     UserOtpRepository, 
   ],
 })

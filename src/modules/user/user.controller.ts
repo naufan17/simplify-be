@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { AccessJwtAuthGuard } from '../../common/guard/auth/access-jwt-auth.guard';
 import { User } from './entity/user.entity';
 import { AuthenticatedRequest } from 'src/types/authenticated-request';
+import { UserId } from '../../common/decorators/user.decorator'
 
 @Controller('user')
 export class UserController {
@@ -12,8 +13,10 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('profile')
-  async getProfile(@Req() req: AuthenticatedRequest, @Res() res: Response) {
-    const userId: string = req.user.sub;
+  async getProfile(
+    @UserId() userId: string,
+    @Res() res: Response
+  ) {
     const user: User = await this.userService.getProfile(userId);
 
     return res.status(HttpStatus.OK).json({
@@ -26,8 +29,10 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('session')
-  async getSession(@Req() req: AuthenticatedRequest, @Res() res: Response) {
-    const userId: string = req.user.sub;
+  async getSession(
+    @UserId() userId: string, 
+    @Res() res: Response
+  ) {
     const session: any = await this.userService.getSession(userId);
 
     return res.status(HttpStatus.OK).json({
