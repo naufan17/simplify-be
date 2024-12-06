@@ -40,6 +40,7 @@ import { UserModule } from '../user/user.module';
     ValidateResetJwtStrategy,
     UserOtpRepository, 
   ],
+  exports: [UserOtpRepository]
 })
 
 export class AuthModule {}

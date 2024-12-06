@@ -10,7 +10,10 @@ import { Qrcode } from './entity/qrcode.entity';
     TypeOrmModule.forFeature([Qrcode]),
   ],
   controllers: [QrcodeController],
-  providers: [QrcodeService, QrcodeRepository]
+  providers: [
+    QrcodeService, 
+    QrcodeRepository
+  ]
 })
 
 export class QrcodeModule {}

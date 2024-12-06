@@ -9,8 +9,11 @@ import { UrlRepository } from './repository/url.repository';
   imports: [
     TypeOrmModule.forFeature([Url])
   ],
-  providers: [ShortenUrlService, UrlRepository],
-  controllers: [ShortenUrlController]
+  controllers: [ShortenUrlController],
+  providers: [
+    ShortenUrlService, 
+    UrlRepository
+  ],
 })
 
 export class ShortenUrlModule {}

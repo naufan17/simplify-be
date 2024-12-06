@@ -19,7 +19,19 @@ import DailyRotateFile from 'winston-daily-rotate-file';
         }),
         new DailyRotateFile({
           level: 'info',
-          filename: 'logs/%DATE%.log',
+          filename: 'logs/info-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: true,
+          maxSize: '20m',
+          maxFiles: '14d',
+          format: format.combine(
+            format.timestamp(),
+            format.json()
+          )
+        }),
+        new DailyRotateFile({
+          level: 'error',
+          filename: 'logs/error-%DATE%.log',
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxSize: '20m',
