@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, HttpStatus, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
@@ -40,7 +39,7 @@ export class UserController {
       message: 'User session fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { sessions, meta },
+      data: { sessions, meta },    
     });
   }
 }

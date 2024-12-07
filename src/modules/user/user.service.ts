@@ -48,7 +48,7 @@ export class UserService {
       
     const sessions: { ipAddress: string; userAgent: string; loginAt: Date; lastActiveAt: Date; status: string }[] = session.map(sessions => {
       const isActive = new Date() < new Date(sessions.expiresAt);
-      const { expiresAt, ...sessionsData } = sessions;
+      const { id, expiresAt, ...sessionsData } = sessions;
       return { ...sessionsData, status: isActive ? 'active' : 'expired' };
     });
 
