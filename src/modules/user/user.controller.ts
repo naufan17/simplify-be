@@ -40,8 +40,7 @@ export class UserController {
       message: 'User session fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { sessions },
-      meta,
+      data: { sessions, meta },
     });
   }
 }

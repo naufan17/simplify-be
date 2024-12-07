@@ -9,12 +9,12 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const configService: ConfigService = new ConfigService();
   const app: INestApplication = await NestFactory.create(AppModule);
-  const port: number = Number(configService.get('PORT')) || 8000;
-  // const hostname: string = process.env.HOSTNAME || 'localhost';
+  const port: number = Number(configService.get<number>('PORT')) || 8000;
+  // const hostname: string = configService.get<string>('HOSTNAME') || 'localhost';
 
   app.use(helmet());
   app.use(compression());
-  app.use(cookieParser(configService.get('COOKIE_SECRET')));  
+  app.use(cookieParser(configService.get<string>('COOKIE_SECRET')));  
 
   app.enableCors({
     origin: true,
