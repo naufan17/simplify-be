@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { AccessJwtAuthGuard } from 'src/common/guard/auth/access-jwt-auth.guard';
 import { LocalAuthGuard } from 'src/common/guard/auth/local-auth.guard';
 import { ResetJwtAuthGuard } from 'src/common/guard/auth/reset-jwt-auth.guard';
-import { AuthenticatedRequest } from 'src/types/authenticated-request';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { resetPasswordDto } from './dto/reset-password.dto';
