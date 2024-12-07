@@ -19,14 +19,46 @@ export class UserService {
     return user;
   }
 
-  async getSession(userId: string): Promise<{ ipAddress: string; userAgent: string; loginAt: Date; lastActiveAt: Date; status: string }[]> {
-    const sessions: Session[] = await this.sessionRepository.findById(userId);
-    if (sessions.length === 0) throw new NotFoundException('User session not found');
+  async getSession(
+    userId: string, 
+    page: number, 
+    limit: number
+  ): Promise<{ 
+    sessions: { 
+      ipAddress: string; 
+      userAgent: string; 
+      loginAt: Date; 
+      lastActiveAt: Date; 
+      status: string 
+    }[], 
+    meta: { 
+      currentPage: number; 
+      totalPages: number; 
+      itemsPerPage: number; 
+      totalItems: number; 
+      hasPreviousPage: boolean; 
+      hasNextPage: boolean 
+    }
+  }> {
+    if (isNaN(page)) page = 1;
+    if (isNaN(limit)) limit = 10;
+
+    const { session, count }: { session: Session[], count: number } = await this.sessionRepository.findByUserId(userId, page, limit);
+    if (session.length === 0) throw new NotFoundException('User session not found');
       
-    return sessions.map(session => {
-      const isActive = new Date() < new Date(session.expiresAt);
-      const { expiresAt, ...sessionsData } = session;
+    const sessions: { ipAddress: string; userAgent: string; loginAt: Date; lastActiveAt: Date; status: string }[] = session.map(sessions => {
+      const isActive = new Date() < new Date(sessions.expiresAt);
+      const { expiresAt, ...sessionsData } = sessions;
       return { ...sessionsData, status: isActive ? 'active' : 'expired' };
     });
+
+    const currentPage = page;
+    const totalPages = Math.ceil(count / limit);
+    const itemsPerPage = limit;
+    const totalItems = count;
+    const hasPreviousPage = currentPage > 1;
+    const hasNextPage = currentPage < totalPages;
+
+    return { sessions, meta: { currentPage, totalPages, itemsPerPage, totalItems, hasPreviousPage, hasNextPage }};
   }
 }

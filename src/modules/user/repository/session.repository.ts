@@ -27,11 +27,16 @@ export class SessionRepository {
     return this.sessionRepository.update({ user: { id: userId } }, { expiresAt: new Date() });
   }
 
-  async findById(userId: string): Promise<Session[]> {
-    return this.sessionRepository.find({ 
-      where: { user: { id: userId } }, 
-      select: ['ipAddress', 'userAgent', 'loginAt', 'lastActiveAt', 'expiresAt'] 
+  async findByUserId(userId: string, page: number, limit: number): Promise<{ session: Session[], count: number }> {
+    const [session, count] = await this.sessionRepository.findAndCount({
+      where: { user: { id: userId } },
+      select: ['id', 'ipAddress', 'userAgent', 'loginAt', 'lastActiveAt', 'expiresAt'],
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { loginAt: 'DESC' }
     });
+
+    return { session, count };
   }
 
   async findBySessionId(sessionId: string): Promise<Session | null> {

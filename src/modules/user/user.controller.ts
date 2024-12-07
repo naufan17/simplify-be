@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Controller, Get, HttpStatus, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { AccessJwtAuthGuard } from '../../common/guard/auth/access-jwt-auth.guard';
 import { User } from './entity/user.entity';
-import { AuthenticatedRequest } from 'src/types/authenticated-request';
 import { UserId } from '../../common/decorators/user.decorator'
 
 @Controller('user')
@@ -30,16 +29,19 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Get('session')
   async getSession(
-    @UserId() userId: string, 
+    @UserId() userId: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
     @Res() res: Response
   ) {
-    const session: any = await this.userService.getSession(userId);
+    const { sessions, meta } = await this.userService.getSession(userId, page, limit);
 
     return res.status(HttpStatus.OK).json({
       message: 'User session fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { session },
+      data: { sessions },
+      meta,
     });
   }
 }
