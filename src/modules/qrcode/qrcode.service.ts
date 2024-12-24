@@ -145,8 +145,10 @@ export class QrcodeService {
       },
     })
 
-    const qrcodeUrl: any = await qrcode.getRawData("png");
+    const qrcodeRaw: any = await qrcode.getRawData("png");
+    const qrcodeString: string = qrcodeRaw.toString('base64');
+    const qrcodeBase64: string = `data:image/png;base64,${qrcodeString}`;
     
-    return qrcodeUrl.toString('base64')
+    return qrcodeBase64;
   }
 }
