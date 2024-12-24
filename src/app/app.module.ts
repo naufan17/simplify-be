@@ -6,7 +6,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { LoggerModule } from '../config/logger/logger.module';
 import { LoggingMiddleware } from "src/common/middleware/logging/logging.middleware";
-import { AuthModule } from "src/modules/auth/auth.module";
+import { AuthModuleV1 } from "src/modules/auth/v1/auth.module.v1";
+import { AuthModuleV2 } from "src/modules/auth/v2/auth.module.v2";
 import { AppService } from './app.service';
 import { UserModule } from "src/modules/user/user.module";
 import { QrcodeModule } from "src/modules/qrcode/qrcode.module";
@@ -21,7 +22,8 @@ import { HealthModule } from "src/modules/health/health.module";
     ThrottleModule,
     LoggerModule,
     HealthModule,
-    AuthModule,
+    AuthModuleV1,
+    AuthModuleV2,
     UserModule,
     QrcodeModule,
     ShortenUrlModule

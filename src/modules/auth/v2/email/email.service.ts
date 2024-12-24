@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UserOtpRepository } from 'src/modules/mailer/repository/user-otp.repository';
 import { UserOtp } from 'src/modules/mailer/schema/user-otp.schema';
-import { TokenService } from '../token/token.service';
+import { TokenService } from '../../token/token.service';
 import { MailerService } from 'src/modules/mailer/mailer.service';
 
 @Injectable()

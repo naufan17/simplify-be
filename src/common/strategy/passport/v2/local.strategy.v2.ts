@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
-import { AuthService } from "../../../modules/auth/auth.service";
+import { AuthServiceV2 } from "../../../../modules/auth/v2/auth.service.v2";
 import { User } from "src/modules/user/entity/user.entity";
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
-  constructor(private readonly authService: AuthService) {
+export class LocalStrategyV2 extends PassportStrategy(Strategy, 'localV2') {
+  constructor(private readonly authService: AuthServiceV2) {
     super({ usernameField: 'email' });
   }
 

@@ -1,21 +1,16 @@
 import { Body, Controller, Get, HttpStatus, Ip, Post, Req, Res, Headers, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthServiceV1 } from './auth.service.v1';
 import { Request, Response } from 'express';
 import { AccessJwtAuthGuard } from 'src/common/guard/auth/access-jwt-auth.guard';
-import { LocalAuthGuard } from 'src/common/guard/auth/local-auth.guard';
-import { ResetJwtAuthGuard } from 'src/common/guard/auth/reset-jwt-auth.guard';
-import { RegisterDto } from './dto/register.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { resetPasswordDto } from './dto/reset-password.dto';
-import { OtpDto } from './dto/otp.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { ValidateResetJwtAuthGuard } from 'src/common/guard/auth/validate-reset-jwt-auth.guard';
+import { LocalAuthGuardV1 } from 'src/common/guard/auth/v1/local-auth.guard.v1';
+import { RegisterDto } from '../dto/register.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
 import { SignedCookie } from 'src/common/decorators/signed-cookie.decorator';
 import { UserId } from 'src/common/decorators/user.decorator';
 
-@Controller('auth')
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+@Controller({ path: 'auth', version: '1' })
+export class AuthControllerV1 {
+  constructor(private readonly authService: AuthServiceV1) {}
 
   @Post('register')
   async register(
@@ -27,16 +22,13 @@ export class AuthController {
     await this.authService.register(name, email, phoneNumber, password);
 
     return res.status(HttpStatus.CREATED).json({
-      message: [
-        'User created successfully', 
-        'Verify your email to login', 'OTP sent to your email'
-      ],
+      message: 'User created successfully',
       success: 'Created',
       statusCode: HttpStatus.CREATED,
     });  
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuardV1)
   @Post('login')
   async login(
     @Ip() ipAddress: string, 
@@ -63,21 +55,6 @@ export class AuthController {
     });
   }
 
-  @Post('verify-email')
-  async verifyEmail(
-    @Body() otpDto: OtpDto, 
-    @Res() res: Response
-  ) {
-    const { otp }: OtpDto = otpDto;
-
-    await this.authService.verifyEmail(otp);
-
-    return res.status(HttpStatus.OK).json({
-      message: 'Email verified successfully',
-      success: 'Ok',
-      statusCode: HttpStatus.OK,
-    });
-  }
 
   @Get('refresh')
   async refreshAccessToken(
@@ -132,49 +109,5 @@ export class AuthController {
       success: 'Ok',
       statusCode: HttpStatus.OK
     })
-  }
-
-  @Post('forgot-password')
-  async forgotPassword(
-    @Body() forgotPasswordDto: ForgotPasswordDto, 
-    @Req() req: Request, 
-    @Res() res: Response
-  ) {
-    const { email }: ForgotPasswordDto = forgotPasswordDto;
-    const url: string = `${req.protocol}://${req.get('host')}`;
-    await this.authService.forgotPassword(email, url);
-
-    return res.status(HttpStatus.OK).json({
-      message: 'Password reset link has been sent to your email',
-      success: 'Ok',
-      statusCode: HttpStatus.OK,
-    });
-  }
-
-  @UseGuards(ValidateResetJwtAuthGuard)
-  @Get('reset-password')
-  async validateResetToken(@Res() res: Response) {
-    return res.status(HttpStatus.OK).json({
-      message: 'Reset token is valid',
-      success: 'Ok',
-      statusCode: HttpStatus.OK,
-    });
-  }
-
-  @UseGuards(ResetJwtAuthGuard)
-  @Post('reset-password')
-  async resetPassword(
-    @UserId() userId: string, 
-    @Body() resetPasswordDto: resetPasswordDto,
-    @Res() res: Response
-  ) {
-    const { password }: resetPasswordDto = resetPasswordDto;
-    await this.authService.resetPassword(userId, password);
-
-    return res.status(HttpStatus.OK).json({
-      message: 'Password reset successfully',
-      success: 'Ok',
-      statusCode: HttpStatus.OK
-    });
   }
 }
