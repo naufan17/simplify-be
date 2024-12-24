@@ -15,7 +15,7 @@ export class ShortenUrlController {
     @Res() res: Response
   ) {
     const { url, alias }: ShortenUrlDto = shortenUrlDto;
-    const { urlId, expiresAt }: { urlId: string; expiresAt: Date } = await this.shortenUrlService.shortenUrl(url, alias);
+    const { urlId, expirationTimestamp }: { urlId: string; expirationTimestamp: number } = await this.shortenUrlService.shortenUrl(url, alias);
     const shortenUrl: string = `${req.protocol}://${req.get('host')}/${urlId}`;
 
     return res.status(HttpStatus.CREATED).json({
@@ -24,7 +24,7 @@ export class ShortenUrlController {
       statusCode: HttpStatus.CREATED,
       data: { 
         url: shortenUrl,
-        expiresAt
+        expiresAt: expirationTimestamp
       },
     });
   }

@@ -7,8 +7,9 @@ import { Url } from './entity/url.entity';
 export class ShortenUrlService {
   constructor(private readonly urlRepository: UrlRepository) {}
 
-  async shortenUrl(originalUrl: string, alias?: string): Promise<{ urlId: string; expiresAt: Date }> {
+  async shortenUrl(originalUrl: string, alias?: string): Promise<{ urlId: string; expirationTimestamp: number }> {
     const expiresAt: Date = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const expirationTimestamp: number = expiresAt.getTime();
     const urlId: string = alias || randomBytes(4).toString('base64url');
 
     if (alias) {
@@ -19,7 +20,7 @@ export class ShortenUrlService {
     const urlStore: Url =  await this.urlRepository.createUrl(originalUrl, urlId, new Date(), expiresAt);
     if (!urlStore) throw new InternalServerErrorException();
 
-    return { urlId, expiresAt };
+    return { urlId, expirationTimestamp };
   }
 
   async getOriginalUrl(urlId: string): Promise<string>{
