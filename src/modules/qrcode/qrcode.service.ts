@@ -10,60 +10,135 @@ import { Qrcode } from './entity/qrcode.entity';
 export class QrcodeService {
   constructor(private readonly qrcodeRepository: QrcodeRepository) {}
 
-  async textQrcode(text: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async textQrcode(
+    userId: string | null,
+    text: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const qrcode: string = await this.generateQrcode(text, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('text', text, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId,'text', text, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async urlQrcode(url: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async urlQrcode(
+    userId: string | null,
+    url: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const qrcode: string = await this.generateQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('url', url, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId, 'url', url, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async emailQrcode(email: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async emailQrcode(
+    userId: string | null,
+    email: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const formattedEmail: string = `mailto:${email}`;
     const qrcode: string = await this.generateQrcode(formattedEmail, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('email', formattedEmail, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId, 'email', formattedEmail, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async whatsappQrcode(whatsapp: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async whatsappQrcode(
+    userId: string | null,
+    whatsapp: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const formattedWhatsapp: string = 'https://wa.me/62' + whatsapp.substring(1);
     const qrcode: string = await this.generateQrcode(formattedWhatsapp, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('whatsapp', formattedWhatsapp, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId, 'whatsapp', formattedWhatsapp, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async wifiQrcode(ssid: string, password: string | undefined, encryption: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async wifiQrcode(
+    userId: string | null,
+    ssid: string, 
+    password: string | undefined, 
+    encryption: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const formattedWifi: string = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
     const qrcode: string = await this.generateQrcode(formattedWifi, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('wifi', formattedWifi, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId, 'wifi', formattedWifi, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async socialMediaQrcode(socialMedia: string, username: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async socialMediaQrcode(
+    userId: string | null,
+    socialMedia: string, 
+    username: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     let url: string;
     // let image: string;
     switch (socialMedia) {
@@ -106,13 +181,24 @@ export class QrcodeService {
     const qrcode: string = await this.generateQrcode(url, size, margin, dotsColor, dotsType, backgroundColor, cornersSquareColor, cornersSquareType, cornersDotColor, cornersDotType);
     if (!qrcode) throw new InternalServerErrorException();
 
-    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode('social media', url, qrcode, new Date());
+    const newQrcode: Qrcode = await this.qrcodeRepository.createQrcode(userId, 'social media', url, qrcode, new Date());
     if (!newQrcode) throw new InternalServerErrorException();
 
     return qrcode;
   }
 
-  async generateQrcode(payload: string, size: number | undefined, margin: number | undefined, dotsColor: string | undefined, dotsType: DotType | undefined, backgroundColor: string | undefined, cornersSquareColor: string | undefined, cornersSquareType: CornerSquareType | undefined, cornersDotColor: string | undefined, cornersDotType: CornerDotType | undefined): Promise<string> {
+  async generateQrcode(
+    payload: string, 
+    size: number | undefined, 
+    margin: number | undefined, 
+    dotsColor: string | undefined, 
+    dotsType: DotType | undefined, 
+    backgroundColor: string | undefined, 
+    cornersSquareColor: string | undefined, 
+    cornersSquareType: CornerSquareType | undefined, 
+    cornersDotColor: string | undefined, 
+    cornersDotType: CornerDotType | undefined
+  ): Promise<string> {
     const qrcode: QRCodeStyling = new QRCodeStyling({
       jsdom: JSDOM,
       nodeCanvas,
@@ -150,5 +236,36 @@ export class QrcodeService {
     const qrcodeBase64: string = `data:image/png;base64,${qrcodeString}`;
     
     return qrcodeBase64;
+  }
+
+  async getQrcodeByUser(
+    userId: string, 
+    page: number, 
+    limit: number
+  ): Promise<{
+    qrcode: Qrcode[], 
+    meta: { 
+      currentPage: number; 
+      totalPages: number; 
+      itemsPerPage: number; 
+      totalItems: number; 
+      hasPreviousPage: boolean; 
+      hasNextPage: boolean 
+    }
+  }> {
+    if (isNaN(page)) page = 1;
+    if (isNaN(limit)) limit = 10;
+
+    const { qrcode, count }: { qrcode: Qrcode[], count: number } = await this.qrcodeRepository.findQrcodeByUser(userId, page, limit);
+    if (qrcode.length === 0) throw new NotFoundException('QR Code history not found');
+
+    const currentPage = page;
+    const totalPages = Math.ceil(count / limit);
+    const itemsPerPage = limit;
+    const totalItems = count;
+    const hasPreviousPage = currentPage > 1;
+    const hasNextPage = currentPage < totalPages;
+
+    return { qrcode, meta: { currentPage, totalPages, itemsPerPage, totalItems, hasPreviousPage, hasNextPage } };
   }
 }

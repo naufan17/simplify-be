@@ -2,6 +2,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Session } from "./session.entity";
 import { Url } from "src/modules/shorten-url/entity/url.entity";
+import { Qrcode } from "src/modules/qrcode/entity/qrcode.entity";
 
 @Entity('users')
 @Index(['email', 'phoneNumber'], { unique: true })
@@ -39,4 +40,7 @@ export class User {
 
   @OneToMany(() => Url, (url: any) => url.user)
   url?: Url[]
+
+  @OneToMany(() => Qrcode, (qrcode: any) => qrcode.user)
+  qrcode?: Qrcode[]
 }

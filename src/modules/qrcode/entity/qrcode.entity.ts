@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { User } from "src/modules/user/entity/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('qrcodes')
 export class Qrcode {
@@ -17,4 +19,7 @@ export class Qrcode {
 
   @Column({ type: 'timestamp' })
   createdAt!: Date;
+
+  @ManyToOne(() => User, (user: any) => user.qrcode, { onDelete: 'CASCADE' })
+  user?: User;
 }

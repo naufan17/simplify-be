@@ -6,6 +6,7 @@ export class CreateQrCodeTable1733227687794 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE "qr_code" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "user_id" uuid NULL,
                 "type" enum('text', 'url', 'email', 'whatsapp', 'wifi', 'social media') NOT NULL,
                 "payload" character varying(255) NOT NULL,
                 "qr_code" character varying(255) NOT NULL,
