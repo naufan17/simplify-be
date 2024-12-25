@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Session } from "./session.entity";
+import { Url } from "src/modules/shorten-url/entity/url.entity";
 
 @Entity('users')
 @Index(['email', 'phoneNumber'], { unique: true })
@@ -35,4 +36,7 @@ export class User {
 
   @OneToMany(() => Session, (session: any) => session.user)
   session?: Session[]
+
+  @OneToMany(() => Url, (url: any) => url.user)
+  url?: Url[]
 }

@@ -4,7 +4,7 @@ export class ShortenUrlDto {
   
   @IsNotEmpty()
   @IsUrl()
-  url!: string;
+  urlOrigin!: string;
 
   @IsOptional()
   @IsString()
