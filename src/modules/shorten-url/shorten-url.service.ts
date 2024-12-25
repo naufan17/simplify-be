@@ -68,6 +68,16 @@ export class ShortenUrlService {
     const hasPreviousPage = currentPage > 1;
     const hasNextPage = currentPage < totalPages;
 
-    return { url, meta: { currentPage, totalPages, itemsPerPage, totalItems, hasPreviousPage, hasNextPage }};
+    return { 
+      url, 
+      meta: { 
+        currentPage, 
+        totalPages, 
+        itemsPerPage, 
+        totalItems, 
+        hasPreviousPage, 
+        hasNextPage 
+      }
+    };
   }
 }

@@ -59,6 +59,16 @@ export class UserService {
     const hasPreviousPage = currentPage > 1;
     const hasNextPage = currentPage < totalPages;
 
-    return { sessions, meta: { currentPage, totalPages, itemsPerPage, totalItems, hasPreviousPage, hasNextPage }};
+    return { 
+      sessions, 
+      meta: { 
+        currentPage, 
+        totalPages, 
+        itemsPerPage, 
+        totalItems, 
+        hasPreviousPage, 
+        hasNextPage 
+      }
+    };
   }
 }

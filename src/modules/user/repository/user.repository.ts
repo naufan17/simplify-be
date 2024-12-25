@@ -32,15 +32,26 @@ export class UserRepository {
     });
   }
 
-  async save(name: string, email: string, phoneNumber: string | undefined, hashedPassword: string): Promise<User> {
+  async save(
+    name: string, 
+    email: string, 
+    phoneNumber: string | undefined, 
+    hashedPassword: string
+  ): Promise<User> {
     return this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
   }
 
-  async updatePassword(id: string, hashedPassword: string): Promise<any> {
+  async updatePassword(
+    id: string, 
+    hashedPassword: string
+  ): Promise<any> {
     return this.userRepository.update(id, { password: hashedPassword });
   }
 
-  async updateIsVerified(id: string, isVerified: boolean): Promise<any> {
+  async updateIsVerified(
+    id: string, 
+    isVerified: boolean
+  ): Promise<any> {
     return this.userRepository.update(id, { isVerified });
   }
 }

@@ -11,15 +11,29 @@ export class SessionRepository {
     private readonly sessionRepository: Repository<Session>
   ) {}
 
-  async createSession(user: any, sessionId: string, ipAddress: string | undefined, userAgent: string | undefined, loginAt: Date, lastActiveAt: Date, expiresAt: Date): Promise<Session> {
+  async createSession(
+    user: any, 
+    sessionId: string, 
+    ipAddress: string | undefined, 
+    userAgent: string | undefined, 
+    loginAt: Date, 
+    lastActiveAt: Date, 
+    expiresAt: Date
+  ): Promise<Session> {
     return this.sessionRepository.save({ user, sessionId, ipAddress, userAgent, loginAt, lastActiveAt, expiresAt });
   }
 
-  async updateSession(sessionId: string, lastActiveAt: Date): Promise<any> {
+  async updateSession(
+    sessionId: string, 
+    lastActiveAt: Date
+  ): Promise<any> {
     return this.sessionRepository.update({ sessionId }, { lastActiveAt });
   }
 
-  async endSession(sessionId: string, expiresAt: Date): Promise<any> {
+  async endSession(
+    sessionId: string, 
+    expiresAt: Date
+  ): Promise<any> {
     return this.sessionRepository.update({ sessionId }, { expiresAt });
   }
 
@@ -27,7 +41,14 @@ export class SessionRepository {
     return this.sessionRepository.update({ user: { id: userId } }, { expiresAt: new Date() });
   }
 
-  async findByUserId(userId: string, page: number, limit: number): Promise<{ session: Session[], count: number }> {
+  async findByUserId(
+    userId: string, 
+    page: number, 
+    limit: number
+  ): Promise<{ 
+    session: Session[], 
+    count: number 
+  }> {
     const [session, count] = await this.sessionRepository.findAndCount({
       where: { user: { id: userId } },
       select: ['id', 'ipAddress', 'userAgent', 'loginAt', 'lastActiveAt', 'expiresAt'],

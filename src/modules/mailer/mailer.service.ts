@@ -9,7 +9,11 @@ export class MailerService {
     private readonly emailQueue: Queue,
   ) {}
 
-  async sendEmailOtp(to: string, subject: string, content: string): Promise<void> {
+  async sendEmailOtp(
+    to: string, 
+    subject: string, 
+    content: string
+  ): Promise<void> {
     const templateName: string = 'otp-email';
 
     try {
@@ -20,7 +24,10 @@ export class MailerService {
     }
   }
 
-  async sendEmailChangePassword(to: string, subject: string): Promise<void> {
+  async sendEmailChangePassword(
+    to: string, 
+    subject: string
+  ): Promise<void> {
     const templateName: string = 'change-password-email';
 
     try {
@@ -31,7 +38,11 @@ export class MailerService {
     }
   }
 
-  async sendEmailResetPassword(to: string, subject: string, content: string): Promise<void> {
+  async sendEmailResetPassword(
+    to: string, 
+    subject: string, 
+    content: string
+  ): Promise<void> {
     const templateName: string = 'reset-password-email';
 
     try {

@@ -36,7 +36,13 @@ export class AuthControllerV1 {
     @Req() req: Request, 
     @Res() res: Response
   ) {
-    const { accessToken, sessionId }: { accessToken: string, sessionId: string } = await this.authService.login(req.user, ipAddress, userAgent);
+    const { 
+      accessToken, 
+      sessionId 
+    }: { 
+      accessToken: string, 
+      sessionId: string 
+    } = await this.authService.login(req.user, ipAddress, userAgent);
 
     res.cookie('refreshToken', sessionId, { 
       httpOnly: true,

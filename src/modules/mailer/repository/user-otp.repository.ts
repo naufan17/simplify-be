@@ -18,7 +18,12 @@ export class UserOtpRepository {
     return this.userOtpModel.findOne({ email });
   }
   
-  async save(userId: string, email: string, otp: number, createdAt: Date): Promise<UserOtp> {
+  async save(
+    userId: string, 
+    email: string, 
+    otp: number, 
+    createdAt: Date
+  ): Promise<UserOtp> {
     return this.userOtpModel.create({ userId, email, otp, createdAt });
   }
 }

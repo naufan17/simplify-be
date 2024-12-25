@@ -266,6 +266,16 @@ export class QrcodeService {
     const hasPreviousPage = currentPage > 1;
     const hasNextPage = currentPage < totalPages;
 
-    return { qrcode, meta: { currentPage, totalPages, itemsPerPage, totalItems, hasPreviousPage, hasNextPage } };
+    return { 
+      qrcode, 
+      meta: { 
+        currentPage, 
+        totalPages, 
+        itemsPerPage, 
+        totalItems, 
+        hasPreviousPage, 
+        hasNextPage 
+      } 
+    };
   }
 }

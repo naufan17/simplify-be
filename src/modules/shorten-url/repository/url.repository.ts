@@ -11,7 +11,14 @@ export class UrlRepository {
     private readonly urlRepository: Repository<Url>
   ) {}
 
-  async createUrl(user: any, urlOrigin: string, urlId: string, urlShort: string, createdAt: Date, expiresAt: Date): Promise<Url> {
+  async createUrl(
+    user: any, 
+    urlOrigin: string, 
+    urlId: string, 
+    urlShort: string, 
+    createdAt: Date, 
+    expiresAt: Date
+  ): Promise<Url> {
     return await this.urlRepository.save({ user, urlOrigin, urlId, urlShort, createdAt, expiresAt });
   }
 
@@ -22,7 +29,14 @@ export class UrlRepository {
     });
   }
 
-  async findUrlByUser(userId: string, page: number, limit: number): Promise<{ url: Url[], count: number }> {
+  async findUrlByUser(
+    userId: string, 
+    page: number, 
+    limit: number
+  ): Promise<{ 
+    url: Url[], 
+    count: number 
+  }> {
     const [url, count] = await this.urlRepository.findAndCount({ 
       where: { user: { id: userId } },
       take: limit, 

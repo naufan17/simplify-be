@@ -17,7 +17,12 @@ export class AuthServiceV1 {
     private readonly tokenService: TokenService,
   ) {}
 
-  async register(name: string, email: string, phoneNumber: string | undefined, password: string): Promise<boolean> {
+  async register(
+    name: string, 
+    email: string, 
+    phoneNumber: string | undefined, 
+    password: string
+  ): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email)
     if (user) throw new ConflictException('User already exists');
 
@@ -30,7 +35,14 @@ export class AuthServiceV1 {
     return true;
   }
 
-  async login(user: any, ipAddress: string | undefined, userAgent: string | undefined): Promise<{ accessToken: string, sessionId: string }> {
+  async login(
+    user: any, 
+    ipAddress: string | undefined, 
+    userAgent: string | undefined
+  ): Promise<{ 
+    accessToken: string, 
+    sessionId: string 
+  }> {
     const sessionEnd: any = await this.sessionRepository.endAllSessions(user.id);
     if (!sessionEnd) throw new InternalServerErrorException();
 
@@ -44,7 +56,11 @@ export class AuthServiceV1 {
     return { accessToken, sessionId }
   }
 
-  async refreshAccessToken(sessionId: string, ipAddress: string | undefined, userAgent: string | undefined) { 
+  async refreshAccessToken(
+    sessionId: string, 
+    ipAddress: string | undefined, 
+    userAgent: string | undefined
+  ): Promise<string> { 
     const session: Session | null = await this.sessionRepository.findBySessionId(sessionId);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
     if (session.expiresAt < new Date()) throw new UnauthorizedException('Refresh token expired');
@@ -69,7 +85,12 @@ export class AuthServiceV1 {
     return true;
   }
 
-  async changePassword(sessionId: string, userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  async changePassword(
+    sessionId: string, 
+    userId: string, 
+    oldPassword: string, 
+    newPassword: string
+  ): Promise<boolean> {
     const user: User | null = await this.userRepository.findPasswordById(userId);
     if (!user) throw new NotFoundException('User not found');
     
@@ -87,7 +108,10 @@ export class AuthServiceV1 {
     return true;
   }
   
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(
+    email: string, 
+    password: string
+  ): Promise<any> {
     const user: User | null = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('User not found');
 

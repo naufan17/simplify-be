@@ -12,7 +12,11 @@ export class EmailService {
     private readonly mailerService: MailerService
   ) {}
 
-  async sendOtp(userId: string, email: string, subject: string): Promise<boolean> {
+  async sendOtp(
+    userId: string, 
+    email: string, 
+    subject: string
+  ): Promise<boolean> {
     const sendOtp: UserOtp | null = await this.userOtpRepository.findByEmail(email);
     if (sendOtp) return true;
 
@@ -29,7 +33,12 @@ export class EmailService {
     return true;
   }
 
-  async sendPasswordResetLink(userId: string, email: string, subject: string, url: string): Promise<boolean> {
+  async sendPasswordResetLink(
+    userId: string, 
+    email: string, 
+    subject: string, 
+    url: string
+  ): Promise<boolean> {
     const resetToken: string = this.tokenService.generateResetToken({ sub: userId });
     const resetUrl: string = `${url}/api/v1/auth/reset-password?token=${resetToken}`;
 
