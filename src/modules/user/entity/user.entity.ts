@@ -11,25 +11,28 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
   
-  @Column({ type:'text' })
+  @Column({ type:'text', nullable: false })
   name!: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'text', unique: true, nullable: false })
   email!: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ type: 'text', unique: true, nullable: true })
   phoneNumber?: string;
 
-  @Column({ default: false })
+  @Column({ type: 'text', nullable: false })
+  profileImage?: string;
+
+  @Column({ type: 'boolean', enum:[false, true], default: false })
   isVerified!: boolean
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: false })
   password!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', nullable: false })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', nullable: false })
   updatedAt!: Date;
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })

@@ -11,8 +11,8 @@ async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   const port: number = Number(configService.get<number>('PORT')) || 8000;
   // const hostname: string = configService.get<string>('HOSTNAME') || 'localhost';
-  // const isProduction = configService.get<string>('NODE_ENV') === 'production';
-  // const corsOrigin = configService.get<string>('CORS_ORIGIN');
+  // const isProduction: boolean = configService.get<string>('NODE_ENV') === 'production';
+  // const corsOrigin: string | undefined = configService.get<string>('CORS_ORIGIN');
 
   app.use(helmet());
   app.use(compression());

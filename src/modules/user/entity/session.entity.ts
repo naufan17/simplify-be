@@ -9,22 +9,22 @@ export class Session {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: false })
   sessionId!: string;
 
-  @Column({ length: 45, nullable: true })
+  @Column({ type: 'varchar', length: 45, nullable: true })
   ipAddress!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   userAgent!: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: false })
   loginAt!: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', nullable: false })
   lastActiveAt!: Date;
 
-  @Column({ type: 'timestamp' })  
+  @Column({ type: 'timestamp', nullable: false })  
   expiresAt!: Date
 
   @ManyToOne(() => User, (user: any) => user.session, { onDelete: 'CASCADE' })

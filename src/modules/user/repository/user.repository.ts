@@ -21,7 +21,7 @@ export class UserRepository {
   async findById(userId: string): Promise<User | null> {
     return this.userRepository.findOne({ 
       where: { id: userId }, 
-      select: ['name', 'phoneNumber', 'email'] 
+      select: ['name', 'email', 'phoneNumber', 'profileImage'] 
     });
   }
 
@@ -38,7 +38,8 @@ export class UserRepository {
     phoneNumber: string | undefined, 
     hashedPassword: string
   ): Promise<User> {
-    return this.userRepository.save({ name, email, phoneNumber, password: hashedPassword });
+    const profileImage = 'https://res.cloudinary.com/ddpbwjjfz/image/upload/v1706756352/profile/dqfxsphjjtbfwt4v62gv.jpg';
+    return this.userRepository.save({ name, email, phoneNumber, profileImage, password: hashedPassword });
   }
 
   async updatePassword(
