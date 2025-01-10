@@ -87,16 +87,12 @@ export class AuthServiceV1 {
   async changePassword(
     sessionId: string, 
     userId: string, 
-    oldPassword: string, 
-    newPassword: string
+    password: string,
   ): Promise<boolean> {
     const user: User | null = await this.userRepository.findPasswordById(userId);
     if (!user) throw new NotFoundException('User not found');
     
-    const isPasswordValid: boolean = await bcrypt.compare(oldPassword, user.password);
-    if (isPasswordValid === false) throw new UnauthorizedException('Invalid password');
-
-    const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+    const hashedPassword: string = await bcrypt.hash(password, 10);
     if (!hashedPassword) throw new InternalServerErrorException();
 
     const userUpdate: User = await this.userRepository.updatePassword(userId, hashedPassword);

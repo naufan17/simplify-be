@@ -102,9 +102,9 @@ export class AuthControllerV1 {
     @Body() changePasswordDto: ChangePasswordDto,
     @Res() res: Response
   ) {
-    const { oldPassword, newPassword }: ChangePasswordDto = changePasswordDto;
+    const { password }: ChangePasswordDto = changePasswordDto;
 
-    await this.authService.changePassword(sessionId, userId, oldPassword, newPassword);
+    await this.authService.changePassword(sessionId, userId, password);
     res.clearCookie('refreshToken');
 
     return res.status(HttpStatus.OK).json({
