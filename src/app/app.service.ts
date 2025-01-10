@@ -11,7 +11,7 @@ export class AppService implements OnModuleInit {
       console.log('⚡️[server]: Database connected');
 
       // Reset all tables in the database
-      // await this.resetDatabase();
+      await this.resetDatabase();
     } catch (error) {
       console.error('⚡️[server]: Database connection failed :', error);
     }
