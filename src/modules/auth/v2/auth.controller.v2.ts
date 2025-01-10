@@ -22,9 +22,9 @@ export class AuthControllerV2 {
     @Body() registerDto: RegisterDto, 
     @Res() res: Response
   ) {
-    const { name, email, phoneNumber, password }: RegisterDto = registerDto;
+    const { name, email, password }: RegisterDto = registerDto;
 
-    await this.authService.register(name, email, phoneNumber, password);
+    await this.authService.register(name, email, password);
 
     return res.status(HttpStatus.CREATED).json({
       message: [

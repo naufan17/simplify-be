@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './repository/user.repository';
 import { SessionRepository } from './repository/session.repository';
 import { User } from './entity/user.entity';
@@ -17,6 +17,21 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found');
       
     return user;
+  }
+
+  async updateProfile(
+    userId: string, 
+    name: string | undefined,
+    email: string | undefined, 
+    phoneNumber: string | undefined
+  ): Promise<boolean> {
+    const user: User | null = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const userUpdate: User | null = await this.userRepository.updateProfile(userId, name, email, phoneNumber);
+    if (!userUpdate) throw new InternalServerErrorException();
+      
+    return true;
   }
 
   async getSession(

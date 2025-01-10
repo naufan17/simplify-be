@@ -20,7 +20,6 @@ export class AuthServiceV1 {
   async register(
     name: string, 
     email: string, 
-    phoneNumber: string | undefined, 
     password: string
   ): Promise<boolean> {
     const user: User | null = await this.userRepository.findByEmail(email)
@@ -29,7 +28,7 @@ export class AuthServiceV1 {
     const hashedPassword: string = await bcrypt.hash(password, 10);
     if (!hashedPassword) throw new InternalServerErrorException();
 
-    const newUser: User = await this.userRepository.save(name, email, phoneNumber, hashedPassword);
+    const newUser: User = await this.userRepository.save(name, email, hashedPassword);
     if (!newUser) throw new InternalServerErrorException();
 
     return true;

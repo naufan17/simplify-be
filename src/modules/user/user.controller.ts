@@ -1,9 +1,10 @@
-import { Controller, Get, HttpStatus, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { AccessJwtAuthGuard } from '../../common/guard/auth/access-jwt-auth.guard';
 import { User } from './entity/user.entity';
 import { UserId } from '../../common/decorators/user.decorator'
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('user')
 export class UserController {
@@ -26,6 +27,23 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
+  @Post('profile')
+  async updateProfile(
+    @UserId() userId: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+    @Res() res: Response
+  ) {
+    const { name, email, phoneNumber }: UpdateProfileDto = updateProfileDto;
+    await this.userService.updateProfile(userId, name, email, phoneNumber);
+
+    return res.status(HttpStatus.OK).json({
+      message: 'User profile updated successfully',
+      success: 'Ok',
+      statusCode: HttpStatus.OK,
+    });
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
   @Get('session')
   async getSession(
     @UserId() userId: string,
@@ -42,4 +60,5 @@ export class UserController {
       data: { sessions, meta },    
     });
   }
+
 }

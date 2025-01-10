@@ -34,12 +34,20 @@ export class UserRepository {
 
   async save(
     name: string, 
-    email: string, 
-    phoneNumber: string | undefined, 
+    email: string,
     hashedPassword: string
   ): Promise<User> {
     const profileImage = 'https://res.cloudinary.com/ddpbwjjfz/image/upload/v1706756352/profile/dqfxsphjjtbfwt4v62gv.jpg';
-    return this.userRepository.save({ name, email, phoneNumber, profileImage, password: hashedPassword });
+    return this.userRepository.save({ name, email, profileImage, password: hashedPassword });
+  }
+
+  async updateProfile(
+    id: string,
+    name: string | undefined,
+    email: string | undefined,
+    phoneNumber: string | undefined,
+  ): Promise<any> {
+    return this.userRepository.update(id, { name, email, phoneNumber });
   }
 
   async updatePassword(
