@@ -48,13 +48,21 @@ export class AuthServiceV2 {
     ipAddress: string | undefined, 
     userAgent: string | undefined
   ): Promise<{ 
-    accessToken: string, 
+    accessToken: {
+      accessToken: string,
+      expiresIn: number,
+      type: string
+    }, 
     sessionId: string 
   }> {
     const sessionEnd: any = await this.sessionRepository.endAllSessions(user.id);
     if (!sessionEnd) throw new InternalServerErrorException();
 
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: user.id });
+    const accessToken: { 
+      accessToken: string, 
+      expiresIn: number, 
+      type: string 
+    } = this.tokenService.generateAccessToken({ sub: user.id });
     const sessionId: string = randomBytes(16).toString('hex');
     if (!accessToken || !sessionId) throw new InternalServerErrorException();
 
@@ -78,7 +86,13 @@ export class AuthServiceV2 {
     sessionId: string, 
     ipAddress: string | undefined, 
     userAgent: string | undefined
-  ): Promise<string> { 
+  ): Promise<{
+    accessToken: {
+      accessToken: string,
+      expiresIn: number,
+      type: string
+    }
+  }> { 
     const session: Session | null = await this.sessionRepository.findBySessionId(sessionId);
     if (!session) throw new UnauthorizedException('Invalid refresh token');
     if (session.expiresAt < new Date()) throw new UnauthorizedException('Refresh token expired');
@@ -87,10 +101,14 @@ export class AuthServiceV2 {
     const sessionUpdate: any = await this.sessionRepository.updateSession(sessionId, new Date());
     if (!sessionUpdate) throw new InternalServerErrorException();
 
-    const accessToken: string = this.tokenService.generateAccessToken({ sub: session.user.id });
+    const accessToken: {
+      accessToken: string,
+      expiresIn: number,
+      type: string
+    } = this.tokenService.generateAccessToken({ sub: session.user.id });
     if (!accessToken) throw new InternalServerErrorException();
 
-    return accessToken;
+    return { accessToken };
   }
 
   async logout(sessionId: string): Promise<boolean> {

@@ -40,7 +40,11 @@ export class AuthControllerV1 {
       accessToken, 
       sessionId 
     }: { 
-      accessToken: string, 
+      accessToken: {
+        accessToken: string,
+        expiresIn: number,
+        type: string
+      }, 
       sessionId: string 
     } = await this.authService.login(req.user, ipAddress, userAgent);
 
@@ -57,7 +61,11 @@ export class AuthControllerV1 {
       message: 'User logged in successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { accessToken },
+      data: { 
+        accessToken: accessToken.accessToken,
+        expiresIn: accessToken.expiresIn,
+        type: accessToken.type
+      }
     });
   }
 
@@ -69,13 +77,18 @@ export class AuthControllerV1 {
     @Headers('user-agent') userAgent: string, 
     @Res() res: Response
   ) {
-    const accessToken: string = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const accessToken: any = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
       message: 'Access token refreshed successfully',
       statusCode: HttpStatus.OK,
       success: 'Ok',
-      data: { accessToken }
+      data: { 
+        accessToken: accessToken.accessToken,
+        expiresIn: accessToken.expiresIn,
+        type: accessToken.type
+      }
     });
   }
 

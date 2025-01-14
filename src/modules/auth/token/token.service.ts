@@ -27,18 +27,26 @@ export class TokenService {
     console.log(`Rotated secret key access token: ${accessToken}`);
   }
 
-  generateAccessToken(payload: { sub: string }): string {
-    return this.jwtService.sign(payload, {
+  generateAccessToken(payload: { sub: string }): { 
+    accessToken: string, 
+    expiresIn: number, 
+    type: string 
+  } {
+    let expiresIn: number = this.configService.get<number>('ACCESS_TOKEN_EXPIRES') ?? 900000;
+    const accessToken: string = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
-      expiresIn: this.configService.get<string>('ACCESS_TOKEN_EXPIRES'),
+      expiresIn: expiresIn,
     });
+
+    expiresIn = Date.now() + Number(expiresIn);
+
+    return { accessToken, expiresIn, type: 'Bearer' };
   }
 
   generateResetToken(payload: { sub: string }): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_SECRET_RESET_TOKEN'),
-      expiresIn: this.configService.get<string>('RESET_TOKEN_EXPIRES'),
+      expiresIn: this.configService.get<number>('RESET_TOKEN_EXPIRES'),
     });
   }
-
 }
