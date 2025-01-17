@@ -271,9 +271,10 @@ export class QrcodeController {
     @UserId() userId: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Query('filter') filter: 'text' | 'url' | 'email' | 'whatsapp' | 'wifi' | 'social media',
     @Res() res: Response
   ) {
-    const { qrcode, meta } = await this.qrcodeService.getQrcodeByUser(userId, page, limit);
+    const { qrcode, meta } = await this.qrcodeService.getQrcodeByUser(userId, page, limit, filter);
 
     return res.status(HttpStatus.OK).json({
       message: 'Qr code fetched successfully',

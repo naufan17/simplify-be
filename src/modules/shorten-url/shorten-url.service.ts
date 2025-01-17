@@ -43,7 +43,7 @@ export class ShortenUrlService {
   async getShortenUrlByUser(
     userId: string, 
     page: number, 
-    limit: number
+    limit: number,
   ): Promise<{ 
     url: Url[], 
     meta: { 

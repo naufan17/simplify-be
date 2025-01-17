@@ -15,7 +15,7 @@ export class ShortenUrlController {
   @Post('/shorten-url')
   async shortenUrl(
     @UserId() userId: string,
-    @Body() shortenUrlDto: ShortenUrlDto, 
+    @Body() shortenUrlDto: ShortenUrlDto,
     @Req() req: Request, 
     @Res() res: Response
   ) {

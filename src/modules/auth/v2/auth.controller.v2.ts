@@ -101,8 +101,13 @@ export class AuthControllerV2 {
     @Headers('user-agent') userAgent: string, 
     @Res() res: Response
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const accessToken: any = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
+    const { accessToken }: {
+      accessToken: {
+        accessToken: string, 
+        expiresIn: number, 
+        type: string           
+      } 
+    } = await this.authService.refreshAccessToken(sessionId, ipAddress, userAgent);
 
     return res.status(HttpStatus.OK).json({ 
       message: 'Access token refreshed successfully',

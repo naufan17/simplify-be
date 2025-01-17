@@ -241,7 +241,8 @@ export class QrcodeService {
   async getQrcodeByUser(
     userId: string, 
     page: number, 
-    limit: number
+    limit: number,
+    filter?: 'text' | 'url' | 'email' | 'whatsapp' | 'wifi' | 'social media'
   ): Promise<{
     qrcode: Qrcode[], 
     meta: { 
@@ -255,9 +256,20 @@ export class QrcodeService {
   }> {
     if (isNaN(page)) page = 1;
     if (isNaN(limit)) limit = 10;
+    let qrcode: Qrcode[] = [];
+    let count: number = 0;
 
-    const { qrcode, count }: { qrcode: Qrcode[], count: number } = await this.qrcodeRepository.findQrcodeByUser(userId, page, limit);
-    if (qrcode.length === 0) throw new NotFoundException('QR Code history not found');
+    if (filter) {
+      const result: { qrcode: Qrcode[], count: number } = await this.qrcodeRepository.filterQrcodeByUser(userId, page, limit, filter);
+      qrcode = result.qrcode;
+      count = result.count;
+    } else {
+      const result: { qrcode: Qrcode[], count: number } = await this.qrcodeRepository.findQrcodeByUser(userId, page, limit);
+      qrcode = result.qrcode;
+      count = result.count;
+    }
+
+    if (qrcode.length === 0) throw new NotFoundException('Qr code not found');
 
     const currentPage = page;
     const totalPages = Math.ceil(count / limit);

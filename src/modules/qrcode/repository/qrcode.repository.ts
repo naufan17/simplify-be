@@ -38,4 +38,23 @@ export class QrcodeRepository {
 
     return { qrcode, count };
   }
+
+  async filterQrcodeByUser(
+    userId: string, 
+    page: number, 
+    limit: number,
+    filter: 'text' | 'url' | 'email' | 'whatsapp' | 'wifi' | 'social media'
+  ): Promise<{ 
+    qrcode: Qrcode[], 
+    count: number 
+  }> {
+    const [qrcode, count] = await this.qrcodeRepository.findAndCount({
+      where: { user: { id: userId }, type: filter },
+      take: limit,
+      skip: (page - 1) * limit,
+      order: { createdAt: 'DESC' }
+    });
+
+    return { qrcode, count };
+  }
 }
