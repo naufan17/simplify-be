@@ -51,7 +51,7 @@ export class AuthServiceV2 {
     accessToken: {
       accessToken: string,
       expiresIn: number,
-      type: string
+      tokenType: string
     }, 
     sessionId: string 
   }> {
@@ -61,7 +61,7 @@ export class AuthServiceV2 {
     const accessToken: { 
       accessToken: string, 
       expiresIn: number, 
-      type: string 
+      tokenType: string 
     } = this.tokenService.generateAccessToken({ sub: user.id });
     const sessionId: string = randomBytes(16).toString('hex');
     if (!accessToken || !sessionId) throw new InternalServerErrorException();
@@ -90,7 +90,7 @@ export class AuthServiceV2 {
     accessToken: {
       accessToken: string,
       expiresIn: number,
-      type: string
+      tokenType: string
     }
   }> { 
     const session: Session | null = await this.sessionRepository.findBySessionId(sessionId);
@@ -104,7 +104,7 @@ export class AuthServiceV2 {
     const accessToken: {
       accessToken: string,
       expiresIn: number,
-      type: string
+      tokenType: string
     } = this.tokenService.generateAccessToken({ sub: session.user.id });
     if (!accessToken) throw new InternalServerErrorException();
 

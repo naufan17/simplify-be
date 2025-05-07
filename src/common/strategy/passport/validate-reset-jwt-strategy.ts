@@ -10,12 +10,12 @@ export class ValidateResetJwtStrategy extends PassportStrategy(Strategy, 'jwt-re
   constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: (req: Request) => {
-        const token = req.query.token || req.params['token'];
+        const token = req.query.token as string || req.params['token'] as string;
         if (!token) throw new UnauthorizedException('Token not found');
-        return token;
+        return token || null;
       },
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET_RESET_TOKEN'),
+      secretOrKey: configService.get<string>('JWT_SECRET_RESET_TOKEN') || 'secret',
     });
   }
 

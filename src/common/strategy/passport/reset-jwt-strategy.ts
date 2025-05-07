@@ -10,7 +10,7 @@ export class ResetJwtStrategy extends PassportStrategy(Strategy, 'jwt-reset') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET_RESET_TOKEN'),
+      secretOrKey: configService.get<string>('JWT_SECRET_RESET_TOKEN') || 'secret',
     });
   }
 

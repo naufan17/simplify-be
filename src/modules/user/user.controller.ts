@@ -22,7 +22,7 @@ export class UserController {
       message: 'User profile fetched successfully',
       success: 'Ok',
       statusCode: HttpStatus.OK,
-      data: { user },
+      data: user,
     });
   }
 

@@ -30,7 +30,7 @@ export class TokenService {
   generateAccessToken(payload: { sub: string }): { 
     accessToken: string, 
     expiresIn: number, 
-    type: string 
+    tokenType: string 
   } {
     let expiresIn: number = this.configService.get<number>('ACCESS_TOKEN_EXPIRES') ?? 900000;
     const accessToken: string = this.jwtService.sign(payload, {
@@ -40,7 +40,7 @@ export class TokenService {
 
     expiresIn = Date.now() + Number(expiresIn);
 
-    return { accessToken, expiresIn, type: 'Bearer' };
+    return { accessToken, expiresIn, tokenType: 'Bearer' };
   }
 
   generateResetToken(payload: { sub: string }): string {
